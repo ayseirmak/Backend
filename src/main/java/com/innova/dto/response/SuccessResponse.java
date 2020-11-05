@@ -1,43 +1,31 @@
-package com.innova.errorHandling;
-
-import org.springframework.http.HttpStatus;
+package com.innova.dto.response;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class ApiError {
+import org.springframework.http.HttpStatus;
 
+public class SuccessResponse {
     private HttpStatus status;
     private String message;
-    private List<String> errors;
     private Date timestamp;
 
-    public ApiError() {
+    public SuccessResponse() {
         super();
     }
 
-    public ApiError(final HttpStatus status, final String message, final List<String> errors) {
-        super();
-        this.status = status;
-        this.message = message;
-        this.errors = errors;
-        this.timestamp = new Date();
-    }
-
-    public ApiError(final HttpStatus status, final String message, final String error) {
+    public SuccessResponse(final HttpStatus status, final String message) {
         super();
         this.status = status;
         this.message = message;
-        errors = Arrays.asList(error);
         this.timestamp = new Date();
     }
 
-    public ApiError(final HttpStatus status, final int messageCode, final String error) {
+    public SuccessResponse(final HttpStatus status, final int messageCode) {
         super();
         this.status = status;
         this.message = Integer.toString(messageCode);
-        errors = Arrays.asList(error);
         this.timestamp = new Date();
     }
 
@@ -63,17 +51,5 @@ public class ApiError {
 
     public void setMessage(final String message) {
         this.message = message;
-    }
-
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
-    }
-
-    public void setError(final String error) {
-        errors = Arrays.asList(error);
     }
 }

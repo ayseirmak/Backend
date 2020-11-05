@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.innova.exception.AccessTokenExpiredException;
 import com.innova.model.Attempt;
 import com.innova.repository.AttemptRepository;
 import com.innova.security.services.UserDetailsServiceImpl;
@@ -19,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 
 
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
@@ -40,26 +40,25 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
-            throws ServletException, IOException {
+            throws ServletException, IOException, AccessTokenExpiredException {
 
-        if(!attemptRepository.existsByIp(request.getRemoteAddr())) {
+        if (!attemptRepository.existsByIp(request.getRemoteAddr())) {
             Attempt attempt = new Attempt(request.getRemoteAddr(), 0, LocalDateTime.now());
             attemptRepository.save(attempt);
         }
 
         try {
             String jwt = getJwt(request);
-            if (jwt!=null && tokenProvider.validateJwtToken(jwt, "authorize")) {
-                String username = tokenProvider.getUserNameFromJwtToken(jwt, "authorize");
+            if (jwt != null && tokenProvider.validateJwtToken(jwt, "authorize", request)) {
+                String email = tokenProvider.getSubjectFromJwt(jwt, "authorize");
+                UserDetails userDetails = userDetailsService.loadUserByEmail(email);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication
                         = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
         } catch (Exception e) {
             logger.error("Can NOT set user authentication -> Message: {}", e);
         }
@@ -70,9 +69,17 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.replace("Bearer ","");
+            return authHeader.replace("Bearer ", "");
         }
 
+        return null;
+    }
+
+    private String getRefreshToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authentication");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.replace("Bearer ", "");
+        }
         return null;
     }
 }

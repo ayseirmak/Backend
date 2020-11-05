@@ -31,8 +31,6 @@ public class EmailVerificationConfig {
         javaMailSender.setUsername("innovastajyer2020@gmail.com");
         javaMailSender.setPassword("1admin23");
 
-
-
         Properties mailProperties = new Properties();
         mailProperties.put("mail.smtp.auth", "true");
         mailProperties.put("mail.smtp.starttls.enable", "true");

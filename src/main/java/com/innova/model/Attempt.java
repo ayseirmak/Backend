@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "attempt", schema = "public")
+@Table(name = "user_attempt", schema = "public")
 public class Attempt {
     @Id
     @Column(name = "ip")

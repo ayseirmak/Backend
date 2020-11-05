@@ -1,0 +1,48 @@
+spring:
+  main:
+    banner-mode: off
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        id:
+          new_generator_mappings: false
+  datasource:
+    initialization-mode: always
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/project
+    username: postgres
+    password: admin
+  thymeleaf:
+    template-resolver-order: 1
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 23500386943-9hrfde5uu9qvugpa1bq3cacdsqbbdu0o.apps.googleusercontent.com
+            clientSecret: 9cVEFgH3MjLjwbEZ08gDq_hQ
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+
+innova:
+  app:
+    jwtSecretForAccessToken: jwtInnovaSecretKey
+    jwtSecretForVerification: Iamhereforverification
+    jwtSecretForRefreshToken: Youshallnotpass
+    jtwSecretForPassword: Iamsoosecret
+    jwtAccessTokenExpiration: 1800000
+    jwtRefreshTokenExpiration: 2592000000
+    jwtVerificationTokenExpiration: 21600000
+    jwtPasswordTokenExpiration: 1800000
+  oauth2:
+    authorizedRedirectUris:
+      - http://localhost:4200/auth
+
+captcha_server_key: 6LcQ1tIZAAAAAIpcuDo0eEh8UtK0sDZ6lshWmY6N

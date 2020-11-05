@@ -19,7 +19,7 @@ public class ThymeleafConfig {
     }
 
     @Bean
-    public DatabaseTemplateResolver htmlTemplateResolver(){
+    public DatabaseTemplateResolver htmlTemplateResolver() {
         DatabaseTemplateResolver emailTemplateResolver = new DatabaseTemplateResolver();
         emailTemplateResolver.setTemplateMode(TemplateMode.HTML);
         return emailTemplateResolver;

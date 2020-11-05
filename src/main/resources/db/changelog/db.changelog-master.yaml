@@ -1,11 +1,7 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/changes/attempt.sql
+      file: db/changelog/changes/database_version_001.sql
   - include:
-      file: db/changelog/changes/v0003.sql
+      file: db/changelog/changes/initialize_cloud_roles.sql
   - include:
-      file: db/changelog/changes/data.sql
-  - include:
-      file: db/changelog/changes/template5.sql
-  - include:
-      file: db/changelog/changes/templateData.sql
+      file: db/changelog/changes/initialize_email_templates.sql

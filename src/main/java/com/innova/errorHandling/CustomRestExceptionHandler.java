@@ -1,8 +1,12 @@
 package com.innova.errorHandling;
 
+import com.innova.exception.AccessTokenExpiredException;
 import com.innova.exception.AccountNotActivatedException;
+import com.innova.exception.BadRequestException;
 import com.innova.exception.CaptchaExpectedException;
 import com.innova.exception.ErrorWhileSendingEmailException;
+import com.innova.exception.UnauthorizedException;
+
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,8 +28,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -98,7 +101,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-    @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
         logger.info(ex.getClass().getName());
 
@@ -108,7 +111,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-    @ExceptionHandler({ ConstraintViolationException.class })
+    @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintViolation(final ConstraintViolationException ex, final WebRequest request) {
         logger.info(ex.getClass().getName());
         //
@@ -121,13 +124,39 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    //400
+    @ExceptionHandler({BadRequestException.class})
+    public ResponseEntity<Object> handleBadRequestException(final BadRequestException ex) {
+        logger.info(ex.getClass().getName());
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getmessageCode(), ex.getMessage());
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
     //401
+    @ExceptionHandler({UnauthorizedException.class})
+    public ResponseEntity<Object> handleUnauthorizedException(final UnauthorizedException ex) {
+        logger.info(ex.getClass().getName());
+        final ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, ex.getmessageCode(), ex.getMessage());
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
 
     @ExceptionHandler({AccountNotActivatedException.class})
     public ResponseEntity<Object> handleAccountNotActivatedException(final AccountNotActivatedException ex) {
         logger.info(ex.getClass().getName());
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("timestamp", new Date());
+        myMap.put("path", "api/auth/signin");
+        myMap.put("status", HttpStatus.UNAUTHORIZED.value());
+        myMap.put("error", "Account not activated. Please activate your account!");
+        return new ResponseEntity<>(myMap, HttpStatus.UNAUTHORIZED);
+    }
 
-        final String error = "Hey, you! Stop right there. Activation required.";
+    @ExceptionHandler({AccessTokenExpiredException.class})
+    public ResponseEntity<Object> handleAccessTokenExpiredException(final AccessTokenExpiredException ex) {
+        logger.info(ex.getClass().getName());
+
+        final String error = "Expired JWT Token";
 
         ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, ex.getLocalizedMessage(), error);
         return new ResponseEntity<>(apiError, apiError.getStatus());
@@ -183,7 +212,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
         final String error = "Captcha was expected.";
 
-        ApiError apiError = new ApiError(HttpStatus.EXPECTATION_FAILED, ex.getLocalizedMessage(), error);
+        ApiError apiError = new ApiError(HttpStatus.TOO_MANY_REQUESTS, ex.getLocalizedMessage(), error);
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 

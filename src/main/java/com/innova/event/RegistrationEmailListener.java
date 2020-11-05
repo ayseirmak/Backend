@@ -4,17 +4,13 @@ import com.innova.model.User;
 import com.innova.security.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +18,7 @@ import java.util.Map;
 public class RegistrationEmailListener implements ApplicationListener<OnRegistrationSuccessEvent> {
 
     @Autowired
-    private JavaMailSender javaMailSender;
+    EmailSender emailSender;
 
     @Autowired
     JwtProvider jwtProvider;
@@ -38,19 +34,6 @@ public class RegistrationEmailListener implements ApplicationListener<OnRegistra
             e.printStackTrace();
         }
 
-    }
-
-    public void sendSimpleMessage(String content, String to, String subject) throws MessagingException, IOException {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,
-                                            MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                                            StandardCharsets.UTF_8.name());
-
-        helper.setTo(to);
-        helper.setText(content, true);
-        helper.setSubject(subject);
-
-        javaMailSender.send(message);
     }
 
     private void confirmRegistration(OnRegistrationSuccessEvent event) throws MessagingException, IOException {
@@ -69,6 +52,6 @@ public class RegistrationEmailListener implements ApplicationListener<OnRegistra
         context.setVariables(model);
         String content = templateEngine.process("db-verification_email", context);
 
-        sendSimpleMessage(content ,recipient, "Registration Confirmation");
+        emailSender.sendSimpleMessage(content ,recipient, "Registration Confirmation");
     }
 }

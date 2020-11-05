@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 
 @Aspect
@@ -26,32 +27,25 @@ public class CaptchaAspect {
     AttemptRepository attemptRepository;
 
     @Around("@annotation(RequiresCaptcha)")
-    public Object validateCaptcha(ProceedingJoinPoint joinPoint) throws Throwable{
+    public Object validateCaptcha(ProceedingJoinPoint joinPoint) throws Throwable {
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        if(attemptRepository.existsByIp(request.getRemoteAddr())){
+        if (attemptRepository.existsByIp(request.getRemoteAddr())) {
             Attempt attempt = attemptRepository.findById(request.getRemoteAddr()).get();
-            if(attempt.getAttemptCounter() >= 3){
+            if (attempt.getAttemptCounter() >= 3) {
                 String captchaResponse = request.getHeader(CAPTCHA_HEADER_NAME);
                 boolean isValidCaptcha = captchaValidator.validateCaptcha(captchaResponse);
-                if(!isValidCaptcha){
+                if (!isValidCaptcha) {
                     try {
                         throw new Exception("Captcha was expected");
-                    }
-                    catch (Exception ex){
+                    } catch (Exception ex) {
                         throw new CaptchaExpectedException(ex.getMessage());
                     }
                 }
-                else{
-                    attempt.setAttemptCounter(0);
-                    attemptRepository.save(attempt);
-                    return joinPoint.proceed();
-                }
             }
             return joinPoint.proceed();
-        }
-        else{
+        } else {
             return null;
         }
     }

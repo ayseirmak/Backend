@@ -1,13 +1,13 @@
-package com.innova.message.request;
+package com.innova.dto.request;
 
 import java.util.Set;
 
 import javax.validation.constraints.*;
 
-public class changeForm {
+public class SignUpForm {
 
     @NotBlank
-    @Size(min = 3, max = 50)
+    @Size(min=3, max = 50)
     private String username;
 
     @NotBlank
@@ -18,38 +18,9 @@ public class changeForm {
     private Set<String> role;
 
     @NotBlank
-    @Size(min = 6, max = 20)
+    @Size(min=6, max = 20)
     private String password;
 
-    private String name;
-
-    private String lastname;
-
-    private String age;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
 
     public String getUsername() {
         return username;

@@ -3,6 +3,7 @@ package com.innova.model;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "email_templates", schema = "public")
 public class Template {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

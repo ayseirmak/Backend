@@ -21,7 +21,7 @@ public class DatabaseTemplateResolver extends StringTemplateResolver {
     @Autowired
     TemplateRepository templateRepository;
 
-    public DatabaseTemplateResolver( ) {
+    public DatabaseTemplateResolver() {
         this.setResolvablePatterns(Collections.singleton("db-*"));
         this.setCacheTTLMs(5 * 60 * 1000L);
         this.setCacheable(true);

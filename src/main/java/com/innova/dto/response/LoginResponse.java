@@ -1,22 +1,44 @@
-package com.innova.message.response;
+package com.innova.dto.response;
 
 import java.util.List;
 
-public class JwtResponse {
-    private String token;
+public class LoginResponse {
+    private String accessToken;
+    private String refreshToken;
     private String type = "Bearer";
     private String email;
     private String username;
+    private String name;
+    private String lastName;
     private List<String> roles;
     private Integer id;
 
-    public JwtResponse(String accessToken) {
-        this.token = accessToken;
+    public LoginResponse(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    public JwtResponse(String jwt, Integer id, String username, String email, List<String> roles) {
-        this.token = jwt;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public LoginResponse(String accessToken, String refreshToken, Integer id, String username, String email, List<String> roles, String name, String lastName) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
         this.id = id;
+        this.name = name;
+        this.lastName = lastName;
         this.username = username;
         this.email = email;
         this.roles = roles;
@@ -32,6 +54,14 @@ public class JwtResponse {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public void setUsername(String username) {
@@ -55,11 +85,11 @@ public class JwtResponse {
     }
 
     public String getAccessToken() {
-        return token;
+        return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
-        this.token = accessToken;
+        this.accessToken = accessToken;
     }
 
     public String getTokenType() {

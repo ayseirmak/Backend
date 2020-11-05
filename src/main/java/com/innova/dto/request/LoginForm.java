@@ -1,4 +1,4 @@
-package com.innova.message.request;
+package com.innova.dto.request;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -11,6 +11,8 @@ public class LoginForm {
     @NotBlank
     @Size(min=6, max = 20)
     private String password;
+
+    private boolean rememberMe;
 
     private String captcha;
 
@@ -36,5 +38,13 @@ public class LoginForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 }

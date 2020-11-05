@@ -3,7 +3,11 @@ package com.innova.model;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +24,6 @@ public class User {
     @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", initialValue = 1, allocationSize = 100)
     private Integer id;
 
-    @NotBlank
     @Size(min = 3, max = 50)
     @Column(name = "username")
     private String username;
@@ -33,20 +36,33 @@ public class User {
     @NotBlank
     private String email;
 
-    @NotBlank
     @Size(min = 6, max = 20)
     @Column(name = "password")
     private String password;
 
+    @Size(min = 3, max = 25)
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "lastname")
+    @Size(min = 3, max = 25)
     private String lastname;
 
+    @Column(name = "age")
+    @Size(min = 1, max = 3)
     private String age;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @Size(min = 10, max = 10)
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<Role>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private Set<ActiveSessions> activeSessions = new HashSet<>();;
 
     public User() {
 
@@ -54,6 +70,19 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void addActiveSession(ActiveSessions activeSession){
+        activeSessions.add(activeSession);
+    }
+
+
+    public Set<ActiveSessions> getActiveSessions(){
+        return this.activeSessions;
+    }
+
+    public void setActiveSessions(Set<ActiveSessions> activeSessions){
+        this.activeSessions = activeSessions;
     }
 
     public Set<Role> getRoles() {
@@ -107,6 +136,14 @@ public class User {
         this.enabled = enabled;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getName() {
         return name;
     }
@@ -142,6 +179,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", age='" + age + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", roles=" + roles +
                 '}';
     }
