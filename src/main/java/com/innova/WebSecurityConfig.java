@@ -81,7 +81,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/oauth2/**")
                 .permitAll()
                 .antMatchers(
-                    "/api/user/create-new-password/**"
+                        "/api/entry/getTopics",
+                        "/api/entry/getContent"
+                )
+                .permitAll()
+                .antMatchers(
+                        "/api/user/create-new-password/**",
+                        "/api/user/info/**"
                 )
                 .permitAll()
                 .anyRequest().authenticated()

@@ -16,7 +16,7 @@ spring:
     platform: postgres
     url: jdbc:postgresql://localhost:5432/project
     username: postgres
-    password: admin
+    password: 1111
   thymeleaf:
     template-resolver-order: 1
   security:
