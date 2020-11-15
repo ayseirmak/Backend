@@ -82,7 +82,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(
                         "/api/entry/getTopics",
-                        "/api/entry/getContent"
+                        "/api/entry/getContent",
+                        "/api/entry/getUserContents",
+                        "/api/entry/getLikes"
+
                 )
                 .permitAll()
                 .antMatchers(

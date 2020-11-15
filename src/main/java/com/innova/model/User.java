@@ -1,13 +1,11 @@
 package com.innova.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,13 +54,26 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private Set<Content> content = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "content_like", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "content_id"))
+    private Set<Content> contentLike = new HashSet<Content>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "content_dislike", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "content_id"))
+    private Set<Content> contentDislike = new HashSet<Content>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<Role>();
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
-    private Set<ActiveSessions> activeSessions = new HashSet<>();;
+    private Set<ActiveSessions> activeSessions = new HashSet<>();
+
 
     public User() {
 
@@ -72,17 +83,45 @@ public class User {
         this.id = id;
     }
 
-    public void addActiveSession(ActiveSessions activeSession){
+    public void addActiveSession(ActiveSessions activeSession) {
         activeSessions.add(activeSession);
     }
 
 
-    public Set<ActiveSessions> getActiveSessions(){
+    public Set<ActiveSessions> getActiveSessions() {
         return this.activeSessions;
     }
 
-    public void setActiveSessions(Set<ActiveSessions> activeSessions){
+    public void setActiveSessions(Set<ActiveSessions> activeSessions) {
         this.activeSessions = activeSessions;
+    }
+
+    public Set<Content> getContent() {
+        return content;
+    }
+
+    public void setContent(Set<Content> content) {
+        this.content = content;
+    }
+
+    public void addContent(Content content) {
+        this.content.add(content);
+    }
+
+    public Set<Content> getContentLike() {
+        return contentLike;
+    }
+
+    public void setContentLike(Set<Content> contentLike) {
+        this.contentLike = contentLike;
+    }
+
+    public Set<Content> getContentDislike() {
+        return contentDislike;
+    }
+
+    public void setContentDislike(Set<Content> contentDislike) {
+        this.contentDislike = contentDislike;
     }
 
     public Set<Role> getRoles() {

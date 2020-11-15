@@ -1,6 +1,6 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/changes/database_version_003.sql
+      file: db/changelog/changes/database_version_006.sql
   - include:
       file: db/changelog/changes/initialize_cloud_roles.sql
   - include:

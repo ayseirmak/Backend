@@ -10,6 +10,7 @@ import com.innova.model.Topic;
 import com.innova.model.User;
 import com.innova.repository.ContentRepository;
 import com.innova.repository.TopicRepository;
+import com.innova.repository.UserRepository;
 import com.innova.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/entry")
@@ -33,6 +35,9 @@ public class EntryController {
 
     @Autowired
     ContentRepository contentRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @PostMapping("/addTopic")
     public ResponseEntity<?> addEntry(@Valid @RequestBody TopicForm topicForm) {
@@ -59,28 +64,116 @@ public class EntryController {
         Date date = new Date();
         if (!topicRepository.existsByTopicName(contentForm.getTopicName())) {
             throw new BadRequestException("Topic Name is not valid.", ErrorCodes.TOPIC_NOT_VALID);
-        }
-        else {
+        } else {
             Topic topic = topicRepository.findByTopicName(contentForm.getTopicName());
             Content content = new Content(contentForm.getContent(), 0, 0, 0, 0, date, user, topic);
+            contentRepository.save(content);
             topic.setContentNumber(topic.getContentNumber() + 1);
             topic.addCloud_content(content);
-            contentRepository.save(content);
-
+            user.addContent(content);
+            userRepository.save(user);
             SuccessResponse response = new SuccessResponse(HttpStatus.OK, "New content added successfully.");
             return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
         }
     }
 
     @GetMapping("/getContent")
-    public ResponseEntity<?> getTopic(@RequestParam("topic") String topicName) {
+    public ResponseEntity<?> getContent(@RequestParam("topic") String topicName) {
         if (topicRepository.existsByTopicName(topicName)) {
             Topic topic = topicRepository.findByTopicName(topicName);
             return ResponseEntity.ok().body(topic.getCloud_content());
-        }
-        else{
+        } else {
             throw new BadRequestException("Topic Name is not valid.", ErrorCodes.TOPIC_NOT_VALID);
         }
+    }
+
+    @GetMapping("/getMyContents")
+    public ResponseEntity<?> getMyContents() {
+        User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
+        Set<Content> contentForUser = user.getContent();
+        return ResponseEntity.ok().body(contentForUser);
+    }
+
+    @GetMapping("/getUserContents")
+    public ResponseEntity<?> getUserContents(@RequestParam("userName") String userName) {
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(() -> new BadRequestException("User with given username could not found", ErrorCodes.NO_SUCH_USER));
+        ;
+        Set<Content> contentForUser = user.getContent();
+        return ResponseEntity.ok().body(contentForUser);
+    }
+
+    @PutMapping("/like-dislike")
+    public ResponseEntity<?> likeDislike(@RequestParam("contentID") String contentID, @RequestParam("like") String like) {
+        User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
+        if (contentRepository.existsById(Integer.parseInt(contentID))) {
+            Content content = contentRepository.findById(Integer.parseInt(contentID));
+            if (!user.getContentLike().contains(content) && !user.getContentDislike().contains(content)) {
+                if (like.equals("like")) {
+                    content.setLike(content.getLike() + 1);
+                    content.setDailyLike(content.getDailyLike() + 1);
+                    contentRepository.save(content);
+                    Set<Content> contentLike = user.getContentLike();
+                    contentLike.add(content);
+                    user.setContentLike(contentLike);
+                    userRepository.save(user);
+                    SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
+                    return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
+                } else if (like.equals("dislike")) {
+                    content.setDislike(content.getDislike() + 1);
+                    content.setDailyDislike(content.getDailyDislike() + 1);
+                    contentRepository.save(content);
+                    Set<Content> contentDislike = user.getContentDislike();
+                    contentDislike.add(content);
+                    user.setContentDislike(contentDislike);
+                    userRepository.save(user);
+                    SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
+                    return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
+                } else {
+                    throw new BadRequestException("Something is wrong", ErrorCodes.SOMETHING_IS_WRONG);
+                }
+            } else if (user.getContentLike().contains(content) && !user.getContentDislike().contains(content) && like.equals("cancel-like")) {
+                content.setLike(content.getLike() - 1);
+                content.setDailyLike(content.getDailyLike() - 1);
+                contentRepository.save(content);
+                Set<Content> contentLike = user.getContentLike();
+                contentLike.remove(content);
+                user.setContentLike(contentLike);
+                userRepository.save(user);
+                SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
+                return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
+            } else if (!user.getContentLike().contains(content) && user.getContentDislike().contains(content) && like.equals("cancel-dislike")) {
+                content.setDislike(content.getDislike() - 1);
+                content.setDailyDislike(content.getDailyDislike() - 1);
+                contentRepository.save(content);
+                Set<Content> contentDislike = user.getContentDislike();
+                contentDislike.remove(content);
+                user.setContentDislike(contentDislike);
+                userRepository.save(user);
+                SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
+                return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
+            } else {
+                throw new BadRequestException("Content already liked or disliked.", ErrorCodes.CONTENT_ALREADY_LIKED);
+            }
+        } else {
+            throw new BadRequestException("Content is not valid.", ErrorCodes.CONTENT_NOT_VALID);
+
+        }
+    }
+
+    @GetMapping("/getLikes")
+    public ResponseEntity<?> getMyLikes(@RequestParam("like") String like, @RequestParam("userName") String userName) {
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(() -> new BadRequestException("User with given username could not found", ErrorCodes.NO_SUCH_USER));
+        Set<Content> contentsForUser;
+        if (like.equals("like")) {
+            contentsForUser = user.getContentLike();
+        } else if (like.equals("dislike")) {
+            contentsForUser = user.getContentDislike();
+        } else {
+            throw new BadRequestException("Something is wrong", ErrorCodes.SOMETHING_IS_WRONG);
+        }
+        return ResponseEntity.ok().body(contentsForUser);
     }
 
 }
