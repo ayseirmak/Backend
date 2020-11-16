@@ -14,7 +14,7 @@ spring:
   datasource:
     initialization-mode: always
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/project
+    url: ${DATABASE_URL}
     username: postgres
     password: 1111
   thymeleaf:
