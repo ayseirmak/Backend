@@ -304,7 +304,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interceptors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./interceptors */ "../../../libs/shared/api/src/lib/config/interceptors/index.ts");
 
 
-const baseUrl = 'https://tatli-sozluk.herokuapp.com/';
+const baseUrl = 'https://tatli-sozluk.herokuapp.com';
 const defaultConfig = {
   baseURL: `${baseUrl}/api/`
 };
