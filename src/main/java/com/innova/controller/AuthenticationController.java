@@ -148,6 +148,7 @@ public class AuthenticationController {
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
         roles.add(userRole);
         user.setRoles(roles);
+        user.setEnabled(true);
         userRepository.save(user);
 
         try {
