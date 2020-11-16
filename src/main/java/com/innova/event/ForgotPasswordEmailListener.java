@@ -38,7 +38,7 @@ public class ForgotPasswordEmailListener implements ApplicationListener<OnPasswo
         String email = event.getEmail();
         String token = jwtProvider.generateJwtTokenForPassword(email);
 
-        String url = "http://localhost:4200" + "/resetpassword?token=" + token;
+        String url = "https://tatli-sozluk.herokuapp.com" + "/resetpassword?token=" + token;
 
         Map model = new HashMap();
         model.put("name", "Beloved user");
