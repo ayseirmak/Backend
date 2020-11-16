@@ -117,14 +117,6 @@
                         <image>gcr.io/my-gcp-project/spring-boot-backend</image>
                     </to>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>dockerBuild</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <finalName>spring-boot-backend</finalName>
