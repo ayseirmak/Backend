@@ -1,5 +1,6 @@
 package com.innova.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -55,7 +56,7 @@ public class User {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference
+    @JsonBackReference
     private Set<Content> content = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)

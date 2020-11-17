@@ -2,6 +2,7 @@ package com.innova.controller;
 
 import com.innova.constants.ErrorCodes;
 import com.innova.dto.request.ContentForm;
+import com.innova.dto.request.LikeForm;
 import com.innova.dto.request.TopicForm;
 import com.innova.dto.response.SuccessResponse;
 import com.innova.exception.BadRequestException;
@@ -104,14 +105,17 @@ public class EntryController {
     }
 
     @PutMapping("/like-dislike")
-    public ResponseEntity<?> likeDislike(@RequestParam("contentID") String contentID, @RequestParam("like") String like) {
+    public ResponseEntity<?> likeDislike(@Valid @RequestBody LikeForm likeForm ) {
         User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
-        if (contentRepository.existsById(Integer.parseInt(contentID))) {
-            Content content = contentRepository.findById(Integer.parseInt(contentID));
+        if (contentRepository.existsById(Integer.parseInt(likeForm.getContentID()))) {
+            Content content = contentRepository.findById(Integer.parseInt(likeForm.getContentID()));
             if (!user.getContentLike().contains(content) && !user.getContentDislike().contains(content)) {
-                if (like.equals("like")) {
+                if (likeForm.getLike().equals("like")) {
                     content.setLike(content.getLike() + 1);
                     content.setDailyLike(content.getDailyLike() + 1);
+                    Set<User> userLike = content.getUserLike();
+                    userLike.add(user);
+                    content.setUserLike(userLike);
                     contentRepository.save(content);
                     Set<Content> contentLike = user.getContentLike();
                     contentLike.add(content);
@@ -119,9 +123,12 @@ public class EntryController {
                     userRepository.save(user);
                     SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
                     return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
-                } else if (like.equals("dislike")) {
+                } else if (likeForm.getLike().equals("dislike")) {
                     content.setDislike(content.getDislike() + 1);
                     content.setDailyDislike(content.getDailyDislike() + 1);
+                    Set<User> userDislike = content.getUserDislike();
+                    userDislike.add(user);
+                    content.setUserDislike(userDislike);
                     contentRepository.save(content);
                     Set<Content> contentDislike = user.getContentDislike();
                     contentDislike.add(content);
@@ -132,9 +139,12 @@ public class EntryController {
                 } else {
                     throw new BadRequestException("Something is wrong", ErrorCodes.SOMETHING_IS_WRONG);
                 }
-            } else if (user.getContentLike().contains(content) && !user.getContentDislike().contains(content) && like.equals("cancel-like")) {
+            } else if (user.getContentLike().contains(content) && !user.getContentDislike().contains(content) && likeForm.getLike().equals("cancel-like")) {
                 content.setLike(content.getLike() - 1);
                 content.setDailyLike(content.getDailyLike() - 1);
+                Set<User> userLike = content.getUserLike();
+                userLike.remove(user);
+                content.setUserLike(userLike);
                 contentRepository.save(content);
                 Set<Content> contentLike = user.getContentLike();
                 contentLike.remove(content);
@@ -142,9 +152,12 @@ public class EntryController {
                 userRepository.save(user);
                 SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
                 return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
-            } else if (!user.getContentLike().contains(content) && user.getContentDislike().contains(content) && like.equals("cancel-dislike")) {
+            } else if (!user.getContentLike().contains(content) && user.getContentDislike().contains(content) && likeForm.getLike().equals("cancel-dislike")) {
                 content.setDislike(content.getDislike() - 1);
                 content.setDailyDislike(content.getDailyDislike() - 1);
+                Set<User> userDislike = content.getUserDislike();
+                userDislike.remove(user);
+                content.setUserDislike(userDislike);
                 contentRepository.save(content);
                 Set<Content> contentDislike = user.getContentDislike();
                 contentDislike.remove(content);

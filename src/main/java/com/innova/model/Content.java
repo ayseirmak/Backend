@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "cloud_content", schema = "public")
@@ -46,6 +48,14 @@ public class Content {
     @JsonIgnoreProperties(value = {"createDate","contentNumber","id","cloud_content"})
     private Topic topic;
 
+    @ManyToMany(mappedBy = "contentLike")
+    @JsonIgnoreProperties(value = {"id","enabled","phoneNumber","age","name","lastname","activeSessions","email","password","roles","content","contentLike","contentDislike"})
+    private Set<User> userLike = new HashSet<User>();
+
+    @ManyToMany(mappedBy = "contentDislike")
+    @JsonIgnoreProperties(value = {"id","enabled","phoneNumber","age","name","lastname","activeSessions","email","password","roles","content","contentLike","contentDislike"})
+    private Set<User> userDislike = new HashSet<User>();
+
 
     public Content() {
 
@@ -60,6 +70,22 @@ public class Content {
         this.createDate = createDate;
         this.user = user;
         this.topic = topic;
+    }
+
+    public Set<User> getUserLike() {
+        return userLike;
+    }
+
+    public void setUserLike(Set<User> userLike) {
+        this.userLike = userLike;
+    }
+
+    public Set<User> getUserDislike() {
+        return userDislike;
+    }
+
+    public void setUserDislike(Set<User> userDislike) {
+        this.userDislike = userDislike;
     }
 
     public Integer getId() {

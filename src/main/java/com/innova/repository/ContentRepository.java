@@ -9,4 +9,5 @@ public interface ContentRepository extends JpaRepository<Content, Integer> {
     Boolean existsById(int id);
 
     Content findById(int id);
+
 }
