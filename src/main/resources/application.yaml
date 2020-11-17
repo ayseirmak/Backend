@@ -43,6 +43,6 @@ innova:
     jwtPasswordTokenExpiration: 1800000
   oauth2:
     authorizedRedirectUris:
-      - https://tatli-sozluk.herokuapp.com/#/oauth2/redirect
+      - https://tatli-sozluk.herokuapp.com/#/auth
 
 captcha_server_key: 6LcQ1tIZAAAAAIpcuDo0eEh8UtK0sDZ6lshWmY6N
