@@ -40,7 +40,7 @@ public class Content {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
+    @JsonIgnoreProperties(value = {"id","enabled","phoneNumber","age","name","lastname","activeSessions","email","password","roles","content","contentLike","contentDislike"})
     private User user;
 
     @ManyToOne

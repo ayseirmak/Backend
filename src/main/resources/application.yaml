@@ -14,7 +14,7 @@ spring:
   datasource:
     initialization-mode: always
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/project
+    url: ${DATABASE_URL}
     username: postgres
     password: 1111
   thymeleaf:
@@ -43,6 +43,6 @@ innova:
     jwtPasswordTokenExpiration: 1800000
   oauth2:
     authorizedRedirectUris:
-      - http://localhost:4200/auth
+      - https://tatli-sozluk.herokuapp.com
 
 captcha_server_key: 6LcQ1tIZAAAAAIpcuDo0eEh8UtK0sDZ6lshWmY6N
