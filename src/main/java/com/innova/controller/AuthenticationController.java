@@ -163,7 +163,7 @@ public class AuthenticationController {
     public ResponseEntity<?> confirmRegistration(@RequestParam("token") String token, HttpServletRequest request)
             throws URISyntaxException {
         if (token == null) {
-            return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create("https://tatli-sozluk.herokuapp.com")).build();
+            return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create("https://tatli-sozluk.herokuapp.com/#")).build();
         }
 
         if (token != null && jwtProvider.validateJwtToken(token, "verification", request)) {
@@ -173,10 +173,10 @@ public class AuthenticationController {
             user.setEnabled(true);
             userRepository.save(user);
 
-            return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create("https://tatli-sozluk.herokuapp.com/mailsuccess"))
+            return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create("https://tatli-sozluk.herokuapp.com/#/mailsuccess"))
                     .build();
         } else {
-            return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create("https://tatli-sozluk.herokuapp.com/mailerror"))
+            return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create("https://tatli-sozluk.herokuapp.com/#/mailerror"))
                     .build();
         }
     }
