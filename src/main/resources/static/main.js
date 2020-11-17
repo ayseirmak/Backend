@@ -896,8 +896,8 @@ const setRefreshToken = token => window.localStorage.setItem(_internship_shared_
 const getRefreshToken = () => window.localStorage.getItem(_internship_shared_types__WEBPACK_IMPORTED_MODULE_0__["REFRESH_TOKEN"]);
 const removeRefreshToken = () => window.localStorage.removeItem(_internship_shared_types__WEBPACK_IMPORTED_MODULE_0__["REFRESH_TOKEN"]);
 const getUrlParameter = (name, search) => {
-  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+  name = name.replace(/[\\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex = new RegExp('[\\?&]' + name + '=([^&]*)');
   const results = regex.exec(search);
   return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
