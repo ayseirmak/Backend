@@ -216,6 +216,8 @@ class AuthResource {
         userName: userName
       }
     }).then(r => r.data);
+
+    this.addLike = data => this.axios.put('entry/like-dislike', data, this.axiosRequestConfig).then(r => r.data);
   } // TODO change any types according to request/response model
 
 
@@ -921,7 +923,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!****************************************************************************************************!*\
   !*** C:/Users/MURATHAN/WebstormProjects/Couldnt-Find/libs/store/authentication/src/lib/actions.ts ***!
   \****************************************************************************************************/
-/*! exports provided: loginAsync, forgotpasswordAsync, registerAsync, updateAsync, logoutAsync, topicAsync, contentAsync, resetpasswordAsync, googleLogin, updateLogout, changePasswordAsync */
+/*! exports provided: loginAsync, forgotpasswordAsync, registerAsync, updateAsync, logoutAsync, topicAsync, contentAsync, likeAsync, resetpasswordAsync, googleLogin, updateLogout, changePasswordAsync */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -933,6 +935,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logoutAsync", function() { return logoutAsync; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "topicAsync", function() { return topicAsync; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "contentAsync", function() { return contentAsync; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "likeAsync", function() { return likeAsync; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resetpasswordAsync", function() { return resetpasswordAsync; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "googleLogin", function() { return googleLogin; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateLogout", function() { return updateLogout; });
@@ -947,6 +950,7 @@ const updateAsync = Object(typesafe_actions__WEBPACK_IMPORTED_MODULE_0__["create
 const logoutAsync = Object(typesafe_actions__WEBPACK_IMPORTED_MODULE_0__["createAsyncAction"])('@Authentication/LOGOUT_REQUEST', '@Authentication/LOGOUT_SUCCESS', '@Authentication/LOGOUT_FAILURE')();
 const topicAsync = Object(typesafe_actions__WEBPACK_IMPORTED_MODULE_0__["createAsyncAction"])('@TOPIC_REQUEST', '@TOPIC_SUCCESS', '@TOPIC_FAILURE')();
 const contentAsync = Object(typesafe_actions__WEBPACK_IMPORTED_MODULE_0__["createAsyncAction"])('@CONTENT_REQUEST', '@CONTENT_SUCCESS', '@CONTENT_FAILURE')();
+const likeAsync = Object(typesafe_actions__WEBPACK_IMPORTED_MODULE_0__["createAsyncAction"])('@LIKE_REQUEST', '@LIKE_SUCCESS', '@LIKE_FAILURE')();
 const resetpasswordAsync = Object(typesafe_actions__WEBPACK_IMPORTED_MODULE_0__["createAsyncAction"])('@Authentication/RESETPASSWORD_REQUEST', '@Authentication/RESETPASSWORD_SUCCESS', '@Authentication/RESETPASSWORD_FAILURE')();
 const googleLogin = Object(typesafe_actions__WEBPACK_IMPORTED_MODULE_0__["createAction"])('@Authentication/GOOGLE_LOGIN')();
 const updateLogout = Object(typesafe_actions__WEBPACK_IMPORTED_MODULE_0__["createAction"])('@Authentication/UPDATE_LOGOUT')();
@@ -978,6 +982,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "contentAsync", function() { return _actions__WEBPACK_IMPORTED_MODULE_0__["contentAsync"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "likeAsync", function() { return _actions__WEBPACK_IMPORTED_MODULE_0__["likeAsync"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "resetpasswordAsync", function() { return _actions__WEBPACK_IMPORTED_MODULE_0__["resetpasswordAsync"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "googleLogin", function() { return _actions__WEBPACK_IMPORTED_MODULE_0__["googleLogin"]; });
@@ -991,7 +997,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./types */ "../../../libs/store/authentication/src/lib/types.ts");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_types__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _types__WEBPACK_IMPORTED_MODULE_2__) if(["loginAsync","forgotpasswordAsync","registerAsync","updateAsync","logoutAsync","topicAsync","contentAsync","resetpasswordAsync","googleLogin","updateLogout","changePasswordAsync","authenticationReducer","default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _types__WEBPACK_IMPORTED_MODULE_2__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _types__WEBPACK_IMPORTED_MODULE_2__) if(["loginAsync","forgotpasswordAsync","registerAsync","updateAsync","logoutAsync","topicAsync","contentAsync","likeAsync","resetpasswordAsync","googleLogin","updateLogout","changePasswordAsync","authenticationReducer","default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _types__WEBPACK_IMPORTED_MODULE_2__[key]; }) }(__WEBPACK_IMPORT_KEY__));
 /* harmony import */ var _sagas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./sagas */ "../../../libs/store/authentication/src/lib/sagas.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "authenticationSaga", function() { return _sagas__WEBPACK_IMPORTED_MODULE_3__["authenticationSaga"]; });
 
@@ -1153,6 +1159,18 @@ function* doRegister({
   }
 }
 
+function* doLike({
+  payload
+}) {
+  try {
+    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["call"])(_internship_shared_api__WEBPACK_IMPORTED_MODULE_2__["api"].auth.addLike, payload);
+    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["put"])(_actions__WEBPACK_IMPORTED_MODULE_0__["likeAsync"].success({}));
+  } catch (e) {
+    console.error(e);
+    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["put"])(_actions__WEBPACK_IMPORTED_MODULE_0__["likeAsync"].failure(e));
+  }
+}
+
 function* doUpdate({
   payload
 }) {
@@ -1207,6 +1225,10 @@ function* watchLogin() {
   yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["takeLatest"])(_actions__WEBPACK_IMPORTED_MODULE_0__["loginAsync"].request, doLogin);
 }
 
+function* watchLike() {
+  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["takeLatest"])(_actions__WEBPACK_IMPORTED_MODULE_0__["likeAsync"].request, doLike);
+}
+
 function* watchAddTopic() {
   yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["takeLatest"])(_actions__WEBPACK_IMPORTED_MODULE_0__["topicAsync"].request, doAddTopic);
 }
@@ -1244,7 +1266,7 @@ function* watchUpdateLogout() {
 }
 
 function* authenticationSaga() {
-  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["all"])([Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchLogin), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchRegister), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchLogout), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchUpdate), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchForgotPassword), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchResetPassword), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchChangePassword), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchUpdateLogout), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchAddTopic), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchAddContent)]);
+  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["all"])([Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchLogin), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchRegister), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchLogout), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchUpdate), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchForgotPassword), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchResetPassword), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchChangePassword), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchUpdateLogout), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchAddTopic), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchAddContent), Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__["fork"])(watchLike)]);
 }
 
 /***/ }),
@@ -2918,6 +2940,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _internship_shared_hooks__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @internship/shared/hooks */ "../../../libs/shared/hooks/src/index.ts");
 /* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! styled-components */ "../../../node_modules/styled-components/dist/styled-components.browser.esm.js");
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "../../../node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
+/* harmony import */ var _internship_store_authentication__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @internship/store/authentication */ "../../../libs/store/authentication/src/index.ts");
+
 
 
 
@@ -2962,11 +2987,24 @@ const Contents = () => {
   const {
     isAuthenticated
   } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_6__["useAuthentication"])();
+  const [like, setLike] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
+  const [dislike, setDislike] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
+  const dispatch = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useDispatch"])();
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
     _internship_shared_api__WEBPACK_IMPORTED_MODULE_3__["api"].auth.getContent(topicName).then(r => {
       setAllContent(r);
     }).catch(e => console.error(e));
+    setUpdateContent(false);
   }, [updateContent]);
+
+  const addLike = (contentID, likes) => {
+    const values = {
+      contentID: contentID,
+      like: likes
+    };
+    dispatch(_internship_store_authentication__WEBPACK_IMPORTED_MODULE_10__["likeAsync"].request(values));
+  };
+
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, topicName), isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledNewButton, {
     onClick: () => setNewContent(true)
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
@@ -2978,9 +3016,19 @@ const Contents = () => {
   }) : null, allContent === null || allContent === void 0 ? void 0 : allContent.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     key: key,
     className: "ml-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, d.content), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131: "), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
-    to: '/user/' + d.topic.user.username
-  }, d.topic.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih: "), " ", d.createDate, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, d.content), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+    to: '/user/' + d.user.username
+  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), d.userLike.contains(d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledNewButton, {
+    onClick: () => addLike(d.id, 'like'),
+    disabled: like
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
+    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__["faThumbsUp"]
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledNewButton, {
+    onClick: () => addLike(d.id, 'dislike'),
+    disabled: dislike
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
+    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__["faThumbsDown"]
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", d.createDate.substring(0, 10)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", d.createDate.substring(11, 16)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
 };
 
 /***/ }),
@@ -3755,7 +3803,7 @@ const MainPage = () => {
     to: '/contents/' + d.topicName
   }, d.topicName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "\u0130\xE7erik say\u0131s\u0131:"), " ", d.contentNumber, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/user/' + d.user.username
-  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih:"), " ", d.createDate, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
+  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", ' ', d.createDate.substring(0, 10)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", ' ', d.createDate.substring(11, 16)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
 };
 
 /***/ }),
