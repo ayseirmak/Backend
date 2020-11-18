@@ -1,6 +1,5 @@
 package com.innova.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -11,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "cloud_content", schema = "public")
-public class Content {
+public class Content implements Comparable<Content> {
 
     @NotBlank
     @Id
@@ -40,20 +39,20 @@ public class Content {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties(value = {"id","enabled","phoneNumber","age","name","lastname","activeSessions","email","password","roles","content","contentLike","contentDislike"})
+    @JsonIgnoreProperties(value = {"id", "enabled", "phoneNumber", "age", "name", "lastname", "activeSessions", "email", "password", "roles", "content", "contentLike", "contentDislike"})
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "topic_id", nullable = false)
-    @JsonIgnoreProperties(value = {"createDate","contentNumber","id","cloud_content"})
+    @JsonIgnoreProperties(value = {"createDate", "contentNumber", "id", "cloud_content"})
     private Topic topic;
 
     @ManyToMany(mappedBy = "contentLike")
-    @JsonIgnoreProperties(value = {"id","enabled","phoneNumber","age","name","lastname","activeSessions","email","password","roles","content","contentLike","contentDislike"})
+    @JsonIgnoreProperties(value = {"id", "enabled", "phoneNumber", "age", "name", "lastname", "activeSessions", "email", "password", "roles", "content", "contentLike", "contentDislike"})
     private Set<User> userLike = new HashSet<User>();
 
     @ManyToMany(mappedBy = "contentDislike")
-    @JsonIgnoreProperties(value = {"id","enabled","phoneNumber","age","name","lastname","activeSessions","email","password","roles","content","contentLike","contentDislike"})
+    @JsonIgnoreProperties(value = {"id", "enabled", "phoneNumber", "age", "name", "lastname", "activeSessions", "email", "password", "roles", "content", "contentLike", "contentDislike"})
     private Set<User> userDislike = new HashSet<User>();
 
 
@@ -173,5 +172,15 @@ public class Content {
                 ", user=" + user +
                 ", topic=" + topic +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Content content) {
+        if (this.dailyLike == content.getDailyLike())
+            return 1;
+        else if (this.dailyLike > content.getDailyLike())
+            return 1;
+        else
+            return -1;
     }
 }

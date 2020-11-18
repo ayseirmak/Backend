@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.Set;
+import java.util.TreeSet;
 
 @RestController
 @RequestMapping("api/entry")
@@ -82,7 +83,9 @@ public class EntryController {
     public ResponseEntity<?> getContent(@RequestParam("topic") String topicName) {
         if (topicRepository.existsByTopicName(topicName)) {
             Topic topic = topicRepository.findByTopicName(topicName);
-            return ResponseEntity.ok().body(topic.getCloud_content());
+            Set <Content> sortContent = new TreeSet<Content>().descendingSet();
+            sortContent.addAll(topic.getCloud_content());
+            return ResponseEntity.ok().body(sortContent);
         } else {
             throw new BadRequestException("Topic Name is not valid.", ErrorCodes.TOPIC_NOT_VALID);
         }
@@ -105,7 +108,7 @@ public class EntryController {
     }
 
     @PutMapping("/like-dislike")
-    public ResponseEntity<?> likeDislike(@Valid @RequestBody LikeForm likeForm ) {
+    public ResponseEntity<?> likeDislike(@Valid @RequestBody LikeForm likeForm) {
         User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
         if (contentRepository.existsById(Integer.parseInt(likeForm.getContentID()))) {
             Content content = contentRepository.findById(Integer.parseInt(likeForm.getContentID()));
@@ -166,7 +169,12 @@ public class EntryController {
                 SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
                 return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
             } else {
-                throw new BadRequestException("Content already liked or disliked.", ErrorCodes.CONTENT_ALREADY_LIKED);
+                if (likeForm.getLike().equals("like"))
+                    throw new BadRequestException("Content already liked or disliked.", ErrorCodes.CONTENT_ALREADY_DISLIKED);
+                else if (likeForm.getLike().equals("dislike"))
+                    throw new BadRequestException("Content already liked or disliked.", ErrorCodes.CONTENT_ALREADY_DISLIKED);
+                else
+                    throw new BadRequestException("Something is wrong", ErrorCodes.SOMETHING_IS_WRONG);
             }
         } else {
             throw new BadRequestException("Content is not valid.", ErrorCodes.CONTENT_NOT_VALID);
