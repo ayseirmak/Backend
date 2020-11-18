@@ -170,9 +170,9 @@ public class EntryController {
                 return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
             } else {
                 if (likeForm.getLike().equals("like"))
-                    throw new BadRequestException("Content already liked or disliked.", ErrorCodes.CONTENT_ALREADY_DISLIKED);
+                    throw new BadRequestException("Content already liked.", ErrorCodes.CONTENT_ALREADY_LIKED);
                 else if (likeForm.getLike().equals("dislike"))
-                    throw new BadRequestException("Content already liked or disliked.", ErrorCodes.CONTENT_ALREADY_DISLIKED);
+                    throw new BadRequestException("Content already disliked.", ErrorCodes.CONTENT_ALREADY_DISLIKED);
                 else
                     throw new BadRequestException("Something is wrong", ErrorCodes.SOMETHING_IS_WRONG);
             }
