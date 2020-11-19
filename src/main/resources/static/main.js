@@ -313,7 +313,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interceptors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./interceptors */ "../../../libs/shared/api/src/lib/config/interceptors/index.ts");
 
 
-const baseUrl = 'https://tatli-sozluk.herokuapp.com';
+const baseUrl = 'http://localhost:8080';
 const defaultConfig = {
   baseURL: `${baseUrl}/api/`
 };
@@ -582,7 +582,7 @@ const refreshTokenInterceptor = (error, axios = axios__WEBPACK_IMPORTED_MODULE_1
 
   if (error.response.status === 401 && ((_error$response$data = error.response.data) === null || _error$response$data === void 0 ? void 0 : _error$response$data.error.toString()) === 'JWT Expired.') {
     return new Promise(resolve => {
-      axios.get('https://tatli-sozluk.herokuapp.com/api/auth/refresh-token', {
+      axios.get('http://localhost:8080/api/auth/refresh-token', {
         params: {
           token: Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_0__["getRefreshToken"])()
         }
@@ -934,7 +934,7 @@ const getUserName = () => window.localStorage.getItem(_internship_shared_types__
 const removeUserName = () => window.localStorage.removeItem(_internship_shared_types__WEBPACK_IMPORTED_MODULE_0__["USER_NAME"]);
 const getUrlParameter = (name, search) => {
   name = name.replace(/[\\[]/, '\\[').replace(/[\]]/, '\\]');
-  const regex = new RegExp('[\\?&]' + name + '=([^&]*)');
+  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
   const results = regex.exec(search);
   return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
@@ -2148,7 +2148,7 @@ const StyledRowContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED
 const StyledContainer = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Container"]).withConfig({
   displayName: "MyLikes__StyledContainer",
   componentId: "sc-1biyw3x-2"
-})(["margin-top:1.5rem;@media (min-width:768px){padding-right:3.2rem;}"]);
+})(["@media (min-width:768px){padding-right:3.2rem;}"]);
 const StyledStrong = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_2__["default"].strong.withConfig({
   displayName: "MyLikes__StyledStrong",
   componentId: "sc-1biyw3x-3"
@@ -2156,11 +2156,15 @@ const StyledStrong = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_2__
 const StyledContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(StyledStrong).withConfig({
   displayName: "MyLikes__StyledContent",
   componentId: "sc-1biyw3x-4"
-})(["color:red;"]);
+})(["color:blueviolet;font-weight:500;"]);
 const StyledCancelLikeButton = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(_atoms_Button__WEBPACK_IMPORTED_MODULE_9__["Button"]).withConfig({
   displayName: "MyLikes__StyledCancelLikeButton",
   componentId: "sc-1biyw3x-5"
 })(["background-color:red;font-size:0.7rem;margin-right:3.2rem;margin-bottom:0.5rem;margin-top:0.5rem;"]);
+const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"]).withConfig({
+  displayName: "MyLikes__StyledLink",
+  componentId: "sc-1biyw3x-6"
+})(["color:blueviolet;"]);
 const MyLikes = ({
   username,
   likeOrDislike,
@@ -2195,11 +2199,14 @@ const MyLikes = ({
     setUpdateContent(false);
   }, [updateContent]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, (_ref = likeOrDislike ? myLike : myDislike) === null || _ref === void 0 ? void 0 : _ref.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    style: {
+      listStyleType: 'none'
+    },
     key: key,
     className: "ml-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/contents/' + d.topic.topicName
-  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), !isGuest ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
+  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content, " "), !isGuest ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
     onClick: () => addLike(d.id, 'cancel-like')
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faThumbsDown"]
@@ -2207,9 +2214,9 @@ const MyLikes = ({
     onClick: () => addLike(d.id, 'cancel-dislike')
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faThumbsUp"]
-  }))) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
+  }))) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/user/' + d.user.username
-  }, d.user.username)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", d.createDate.substring(0, 10)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", d.createDate.substring(11, 16)))))));
+  }, d.user.username)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))))))));
 };
 
 /***/ }),
@@ -2250,6 +2257,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
 /* harmony import */ var _molecules__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../molecules */ "../../../libs/ui/src/lib/molecules/index.ts");
 /* harmony import */ var _internship_shared_utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @internship/shared/utils */ "../../../libs/shared/utils/src/index.ts");
+/* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! styled-components */ "../../../node_modules/styled-components/dist/styled-components.browser.esm.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "../../../node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "../../../node_modules/@fortawesome/react-fontawesome/index.es.js");
 
 
 
@@ -2259,6 +2269,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+const StyledNav = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_9__["default"].nav.withConfig({
+  displayName: "Navigation__StyledNav",
+  componentId: "hkvkca-0"
+})(["background-color:blueviolet !important;"]);
 const Navigation = () => {
   const {
     isAuthenticated
@@ -2298,7 +2315,7 @@ const Navigation = () => {
     history.push('/');
   };
 
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledNav, {
     className: "navbar navbar-expand-sm bg-primary  navbar-dark"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "container"
@@ -2328,7 +2345,9 @@ const Navigation = () => {
       type: '@temp/ERROR_REQUIRED',
       payload: null
     })
-  }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_10__["faHome"]
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     className: "nav-link"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["NavLink"], {
     to: "/about",
@@ -2832,7 +2851,7 @@ const Routes = (_ref) => {
   } = _ref,
       props = _objectWithoutProperties(_ref, ["children"]);
 
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["HashRouter"], props, children, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["BrowserRouter"], props, children, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
     exact: true,
     path: "/",
     component: _pages__WEBPACK_IMPORTED_MODULE_2__["MainPage"]
@@ -3023,10 +3042,14 @@ const StyledStrong = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_7__
   displayName: "Contents__StyledStrong",
   componentId: "trcs9c-6"
 })(["margin-right:1rem;"]);
+const StyledContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_7__["default"])(StyledStrong).withConfig({
+  displayName: "Contents__StyledContent",
+  componentId: "trcs9c-7"
+})(["color:blueviolet;font-weight:500;"]);
 const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_7__["default"])(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"]).withConfig({
   displayName: "Contents__StyledLink",
-  componentId: "trcs9c-7"
-})(["color:black;"]);
+  componentId: "trcs9c-8"
+})(["color:blueviolet;"]);
 const Contents = () => {
   const {
     topicName
@@ -3063,9 +3086,12 @@ const Contents = () => {
     setUpdateContents: setUpdateContent,
     topicName: topicName
   }) : null, allContent === null || allContent === void 0 ? void 0 : allContent.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    style: {
+      listStyleType: 'none'
+    },
     key: key,
     className: "ml-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, d.content), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/user/' + d.user.username
   }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, d.userLike.some(element => element.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])()) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
     onClick: () => addLike(d.id, 'cancel-like'),
@@ -3087,7 +3113,7 @@ const Contents = () => {
     disabled: d.userLike.some(element => element.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__["faThumbsDown"]
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", d.createDate.substring(0, 10)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", d.createDate.substring(11, 16)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
 };
 
 /***/ }),
@@ -3574,7 +3600,7 @@ const Login = () => {
     className: "mb-3 mt-3"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(StyledAnchorTag, {
     className: "btn btn-outline-dark alert-dismissible",
-    href: "https://tatli-sozluk.herokuapp.com/oauth2/authorize/google?redirect_uri=https://tatli-sozluk.herokuapp.com/#/auth"
+    href: "http://localhost:8080/oauth2/authorize/google?redirect_uri=http://localhost:4200/auth"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
     icon: _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_9__["faGoogle"],
     style: {
@@ -3820,7 +3846,7 @@ const StyledRow = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE
 const StyledRowContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_3__["default"])(StyledRow).withConfig({
   displayName: "MainPage__StyledRowContent",
   componentId: "sc-1s8aej3-2"
-})(["display:block;"]);
+})(["display:block;margin-bottom:1rem;"]);
 const StyledNewButton = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_3__["default"])(_internship_ui__WEBPACK_IMPORTED_MODULE_6__["Button"]).withConfig({
   displayName: "MainPage__StyledNewButton",
   componentId: "sc-1s8aej3-3"
@@ -3836,7 +3862,11 @@ const StyledStrong = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_3__
 const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_3__["default"])(react_router_dom__WEBPACK_IMPORTED_MODULE_8__["Link"]).withConfig({
   displayName: "MainPage__StyledLink",
   componentId: "sc-1s8aej3-6"
-})(["color:black;"]);
+})(["color:blueviolet;"]);
+const StyledContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_3__["default"])(StyledStrong).withConfig({
+  displayName: "MainPage__StyledContent",
+  componentId: "sc-1s8aej3-7"
+})(["color:blueviolet;font-weight:500;"]);
 const MainPage = () => {
   const [newTopic, setNewTopic] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
   const {
@@ -3856,13 +3886,16 @@ const MainPage = () => {
     setClose: setNewTopic,
     setUpdateTopics: setUpdateTopics
   }) : null, allTopics === null || allTopics === void 0 ? void 0 : allTopics.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    style: {
+      listStyleType: 'none'
+    },
     key: key,
     className: "ml-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/contents/' + d.topicName
-  }, d.topicName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "\u0130\xE7erik say\u0131s\u0131:"), " ", d.contentNumber, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+  }, d.topicName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "\u0130\xE7erik say\u0131s\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.contentNumber), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/user/' + d.user.username
-  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", ' ', d.createDate.substring(0, 10)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", ' ', d.createDate.substring(11, 16)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
+  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.createDate.substring(11, 16))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
 };
 
 /***/ }),
@@ -4404,11 +4437,15 @@ const StyledContainer = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_
 const StyledStrong = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_6__["default"].strong.withConfig({
   displayName: "UserInfo__StyledStrong",
   componentId: "sc-1alte52-3"
-})(["margin-right:1rem;"]);
+})(["margin-right:1rem;margin-bottom:0.5rem;"]);
 const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_6__["default"])(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"]).withConfig({
   displayName: "UserInfo__StyledLink",
   componentId: "sc-1alte52-4"
-})(["color:black;"]);
+})(["color:blueviolet;"]);
+const StyledContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_6__["default"])(StyledStrong).withConfig({
+  displayName: "UserInfo__StyledContent",
+  componentId: "sc-1alte52-5"
+})(["color:blueviolet;font-weight:500;"]);
 const UserInfo = () => {
   const [detail, setDetail] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
   const {
@@ -4489,11 +4526,14 @@ const UserInfo = () => {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faTimes"]
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, userContents === null || userContents === void 0 ? void 0 : userContents.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    style: {
+      listStyleType: 'none'
+    },
     key: key,
     className: "ml-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/contents/' + d.topic.topicName
-  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Like: ", d.like, " Dislike: ", d.dislike), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", d.createDate.substring(0, 10)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", d.createDate.substring(11, 16))))))) : null, likeInfo ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Like: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.like, " "), "Dislike: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislike, " ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16)))))))) : null, likeInfo ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
     className: "btn btn-danger mb-3",
     disabled: !likeInfo,
     onClick: () => setLikeInfo(false)
@@ -4874,24 +4914,31 @@ const StyledRowContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED
 const StyledContainer = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Container"]).withConfig({
   displayName: "MyContents__StyledContainer",
   componentId: "xd1d09-2"
-})(["margin-top:1.5rem;@media (min-width:768px){padding-right:3.2rem;}"]);
+})(["@media (min-width:768px){padding-right:3.2rem;}"]);
 const StyledStrong = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_2__["default"].strong.withConfig({
   displayName: "MyContents__StyledStrong",
   componentId: "xd1d09-3"
-})(["margin-right:1rem;"]);
+})(["margin-right:1rem;margin-bottom:0.5rem;"]);
+const StyledContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(StyledStrong).withConfig({
+  displayName: "MyContents__StyledContent",
+  componentId: "xd1d09-4"
+})(["color:blueviolet;font-weight:500;"]);
 const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"]).withConfig({
   displayName: "MyContents__StyledLink",
-  componentId: "xd1d09-4"
-})(["color:black;"]);
+  componentId: "xd1d09-5"
+})(["color:blueviolet;"]);
 const MyContents = ({
   myContents
 }) => {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, myContents === null || myContents === void 0 ? void 0 : myContents.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    style: {
+      listStyleType: 'none'
+    },
     key: key,
     className: "ml-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 :", ' ', /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/contents/' + d.topic.topicName
-  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Like: ", d.like, " Dislike: ", d.dislike), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", ' ', d.createDate.substring(0, 10)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", ' ', d.createDate.substring(11, 16)))))));
+  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Like: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.like, " "), "Dislike: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislike)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))))))));
 };
 
 /***/ }),
@@ -4946,7 +4993,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["HashRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_app_app__WEBPACK_IMPORTED_MODULE_4__["App"], null)), document.getElementById('root'));
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["BrowserRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_app_app__WEBPACK_IMPORTED_MODULE_4__["App"], null)), document.getElementById('root'));
 
 /***/ }),
 
