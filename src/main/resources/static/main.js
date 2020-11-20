@@ -193,11 +193,11 @@ class AuthResource {
 
     this.addTopic = data => this.axios.post('entry/addTopic', data, this.axiosRequestConfig).then(r => r.data);
 
-    this.getTopic = () => this.axios.get('entry/getTopics', this.axiosRequestConfig).then(r => r.data);
+    this.getTopic = page => this.axios.get('entry/getTopics?currentPage=' + page, this.axiosRequestConfig).then(r => r.data);
 
     this.addContent = data => this.axios.post('entry/addContent', data, this.axiosRequestConfig).then(r => r.data);
 
-    this.getContent = topicName => this.axios.get('entry/getContent', {
+    this.getContent = (topicName, page) => this.axios.get('entry/getContent?currentPage=' + page, {
       params: {
         topic: topicName
       }
@@ -209,9 +209,9 @@ class AuthResource {
       }
     }).then(r => r.data);
 
-    this.myContents = () => this.axios.get('entry/getMyContents', this.axiosRequestConfig).then(r => r.data);
+    this.myContents = page => this.axios.get('entry/getMyContents?currentPage=' + page, this.axiosRequestConfig).then(r => r.data);
 
-    this.userContents = userName => this.axios.get('entry/getUserContents', {
+    this.userContents = (userName, page) => this.axios.get('entry/getUserContents?currentPage=' + page, {
       params: {
         userName: userName
       }
@@ -219,7 +219,7 @@ class AuthResource {
 
     this.addLike = data => this.axios.put('entry/like-dislike', data, this.axiosRequestConfig).then(r => r.data);
 
-    this.getLikes = (like, username) => this.axios.get('entry/getLikes', {
+    this.getLikes = (like, username, page) => this.axios.get('entry/getLikes?currentPage=' + page, {
       params: {
         like: like,
         userName: username
@@ -645,12 +645,21 @@ const success = {
   },
   'auth/send-email': {
     '200': 'Aktivasyon kodunuz gönderildi.'
+  },
+  'entry/like-dislike': {
+    '200': 'İşleminiz Başarılı.'
+  },
+  'entry/addTopic': {
+    '200': 'İşleminiz Başarılı.'
+  },
+  'entry/addContent': {
+    '200': 'İşleminiz Başarılı.'
   }
 };
 const successInterceptor = res => {
   let successMessage = null;
 
-  if ((res === null || res === void 0 ? void 0 : res.config.url.endsWith('/signin')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/sign-up')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/change-password')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/create-new-password')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/forgot-password')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/edit'))) {
+  if ((res === null || res === void 0 ? void 0 : res.config.url.endsWith('/signin')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/sign-up')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/change-password')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/create-new-password')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/forgot-password')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/edit')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/like-dislike')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/addTopic')) || (res === null || res === void 0 ? void 0 : res.config.url.endsWith('/addContent'))) {
     successMessage = success[res.config.url][res === null || res === void 0 ? void 0 : res.status];
   } else if ((res === null || res === void 0 ? void 0 : res.config.url.startsWith('auth/send-email')) && (res === null || res === void 0 ? void 0 : res.status) === 200) {
     successMessage = success['auth/send-email']['200'];
@@ -2028,7 +2037,6 @@ const StyledRow = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE
 })(["margin-bottom:1rem;margin-top:2rem;margin-right:auto;margin-left:auto;"]);
 const ContentForm = ({
   setClose,
-  setUpdateContents,
   topicName
 }) => {
   const {
@@ -2050,7 +2058,6 @@ const ContentForm = ({
     dispatch(_internship_store_authentication__WEBPACK_IMPORTED_MODULE_6__["contentAsync"].request(values));
     setClose(false);
     setShow(false);
-    setUpdateContents(true);
   };
 
   const handleClose = () => {
@@ -2127,6 +2134,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _internship_store_authentication__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @internship/store/authentication */ "../../../libs/store/authentication/src/index.ts");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
 /* harmony import */ var _atoms_Button__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../atoms/Button */ "../../../libs/ui/src/lib/atoms/Button/index.ts");
+/* harmony import */ var _internship_shared_hooks__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @internship/shared/hooks */ "../../../libs/shared/hooks/src/index.ts");
+
 
 
 
@@ -2160,7 +2169,7 @@ const StyledContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MO
 const StyledCancelLikeButton = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(_atoms_Button__WEBPACK_IMPORTED_MODULE_9__["Button"]).withConfig({
   displayName: "MyLikes__StyledCancelLikeButton",
   componentId: "sc-1biyw3x-5"
-})(["background-color:red;font-size:0.7rem;margin-right:3.2rem;margin-bottom:0.5rem;margin-top:0.5rem;"]);
+})(["background-color:red;font-size:0.7rem;margin-right:3.2rem;margin-bottom:0.5rem;margin-top:0.5rem;&:focus{background-color:red;box-shadow:none;}"]);
 const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_2__["default"])(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"]).withConfig({
   displayName: "MyLikes__StyledLink",
   componentId: "sc-1biyw3x-6"
@@ -2175,7 +2184,15 @@ const MyLikes = ({
   const [myLike, setMyLike] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
   const [myDislike, setMyDislike] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
   const dispatch = Object(react_redux__WEBPACK_IMPORTED_MODULE_8__["useDispatch"])();
-  const [updateContent, setUpdateContent] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
+  const [pageLike, setPageLike] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    number: 0
+  });
+  const [pageDislike, setPageDislike] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    number: 0
+  });
+  const {
+    isSuccessRequired
+  } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_10__["useTemporary"])();
 
   const addLike = (contentID, likes) => {
     const values = {
@@ -2183,40 +2200,85 @@ const MyLikes = ({
       like: likes
     };
     dispatch(_internship_store_authentication__WEBPACK_IMPORTED_MODULE_7__["likeAsync"].request(values));
-    setUpdateContent(true);
   };
 
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
-    _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__["api"].auth.getLikes('like', username).then(r => {
+    setPageLike({
+      number: 0
+    });
+    setPageDislike({
+      number: 0
+    });
+  }, [isSuccessRequired]);
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
+    _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__["api"].auth.getLikes('like', username, pageLike.number).then(r => {
       setMyLike(r);
     }).catch(e => console.error(e));
-    setUpdateContent(false);
-  }, [updateContent]);
+  }, [pageLike]);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
-    _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__["api"].auth.getLikes('dislike', username).then(r => {
+    _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__["api"].auth.getLikes('dislike', username, pageDislike.number).then(r => {
       setMyDislike(r);
     }).catch(e => console.error(e));
-    setUpdateContent(false);
-  }, [updateContent]);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, (_ref = likeOrDislike ? myLike : myDislike) === null || _ref === void 0 ? void 0 : _ref.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+  }, [pageDislike]);
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, (_ref = likeOrDislike ? myLike === null || myLike === void 0 ? void 0 : myLike.content : myDislike === null || myDislike === void 0 ? void 0 : myDislike.content) === null || _ref === void 0 ? void 0 : _ref.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     style: {
       listStyleType: 'none'
     },
     key: key,
     className: "ml-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
-    to: '/contents/' + d.topic.topicName
-  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content, " "), !isGuest ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
-    onClick: () => addLike(d.id, 'cancel-like')
+    to: '/contents/' + d.content.topic.topicName
+  }, d.content.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content.content, " "), !isGuest ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
+    onClick: () => addLike(d.id.contentId, 'cancel-like')
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faThumbsDown"]
-  })) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
-    onClick: () => addLike(d.id, 'cancel-dislike')
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Be\u011Fenme Tarihi: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.likeDate.substring(0, 10), " - ", d.likeDate.substring(11, 16)))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
+    onClick: () => addLike(d.id.contentId, 'cancel-dislike')
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faThumbsUp"]
-  }))) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Be\u011Fenmeme Tarihi: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislikeDate.substring(0, 10), " - ", d.dislikeDate.substring(11, 16))))) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/user/' + d.user.username
-  }, d.user.username)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))))))));
+  }, d.user.username)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Olu\u015Fturulma Tarihi : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content.createDate.substring(11, 16)))))), likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
+    className: "justify-content-md-center"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(myLike === null || myLike === void 0 ? void 0 : myLike.first) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms_Button__WEBPACK_IMPORTED_MODULE_9__["Button"], {
+    className: "btn btn-sm mt-2",
+    variant: "outline-primary",
+    onClick: () => setPageLike({
+      number: pageLike.number - 1
+    })
+  }, '<') : null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(myLike === null || myLike === void 0 ? void 0 : myLike.last) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms_Button__WEBPACK_IMPORTED_MODULE_9__["Button"], {
+    className: "btn btn-sm mt-2 ",
+    variant: "outline-primary",
+    onClick: () => setPageLike({
+      number: pageLike.number + 1
+    })
+  }, '>') : null)) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
+    className: "justify-content-md-center"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(myDislike === null || myDislike === void 0 ? void 0 : myDislike.first) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms_Button__WEBPACK_IMPORTED_MODULE_9__["Button"], {
+    className: "btn btn-sm mt-2",
+    variant: "outline-primary",
+    onClick: () => setPageDislike({
+      number: pageDislike.number - 1
+    })
+  }, '<') : null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(myDislike === null || myDislike === void 0 ? void 0 : myDislike.last) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms_Button__WEBPACK_IMPORTED_MODULE_9__["Button"], {
+    className: "btn btn-sm mt-2 ",
+    variant: "outline-primary",
+    onClick: () => setPageDislike({
+      number: pageDislike.number + 1
+    })
+  }, '>') : null))));
 };
 
 /***/ }),
@@ -2491,7 +2553,7 @@ const StyledRow = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE
 })(["margin-bottom:1rem;margin-top:2rem;margin-right:auto;margin-left:auto;"]);
 const TopicForm = ({
   setClose,
-  setUpdateTopics
+  setPage
 }) => {
   const {
     handleSubmit,
@@ -2509,7 +2571,9 @@ const TopicForm = ({
     dispatch(_internship_store_authentication__WEBPACK_IMPORTED_MODULE_5__["topicAsync"].request(values));
     setClose(false);
     setShow(false);
-    setUpdateTopics(true);
+    setPage({
+      number: 0
+    });
   };
 
   const handleClose = () => {
@@ -3051,22 +3115,28 @@ const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODUL
   componentId: "trcs9c-8"
 })(["color:blueviolet;"]);
 const Contents = () => {
+  var _allContent$content;
+
   const {
     topicName
   } = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["useParams"])();
   const [allContent, setAllContent] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
-  const [updateContent, setUpdateContent] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
   const [newContent, setNewContent] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
   const {
     isAuthenticated
   } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_6__["useAuthentication"])();
   const dispatch = Object(react_redux__WEBPACK_IMPORTED_MODULE_9__["useDispatch"])();
+  const {
+    isSuccessRequired
+  } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_6__["useTemporary"])();
+  const [page, setPage] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    number: 0
+  });
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
-    _internship_shared_api__WEBPACK_IMPORTED_MODULE_3__["api"].auth.getContent(topicName).then(r => {
+    _internship_shared_api__WEBPACK_IMPORTED_MODULE_3__["api"].auth.getContent(topicName, page.number).then(r => {
       setAllContent(r);
     }).catch(e => console.error(e));
-    setUpdateContent(false);
-  }, [updateContent]);
+  }, [page, isSuccessRequired]);
 
   const addLike = (contentID, likes) => {
     const values = {
@@ -3074,7 +3144,6 @@ const Contents = () => {
       like: likes
     };
     dispatch(_internship_store_authentication__WEBPACK_IMPORTED_MODULE_10__["likeAsync"].request(values));
-    setUpdateContent(true);
   };
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, topicName), isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledNewButton, {
@@ -3083,9 +3152,8 @@ const Contents = () => {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__["faPlus"]
   }))) : null, newContent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_5__["ContentForm"], {
     setClose: setNewContent,
-    setUpdateContents: setUpdateContent,
     topicName: topicName
-  }) : null, allContent === null || allContent === void 0 ? void 0 : allContent.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+  }) : null, allContent === null || allContent === void 0 ? void 0 : (_allContent$content = allContent.content) === null || _allContent$content === void 0 ? void 0 : _allContent$content.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     style: {
       listStyleType: 'none'
     },
@@ -3093,27 +3161,47 @@ const Contents = () => {
     className: "ml-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/user/' + d.user.username
-  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, d.userLike.some(element => element.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])()) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
+  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, d.userLike.some(element => element.user.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])()) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
     onClick: () => addLike(d.id, 'cancel-like'),
-    disabled: d.userDislike.some(element => element.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
+    disabled: d.userDislike.some(element => element.user.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__["faThumbsUp"]
   })) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLikeButton, {
     onClick: () => addLike(d.id, 'like'),
-    disabled: d.userDislike.some(element => element.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
+    disabled: d.userDislike.some(element => element.user.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__["faThumbsUp"]
-  })), d.userDislike.some(element => element.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])()) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
+  })), d.userDislike.some(element => element.user.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])()) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
     onClick: () => addLike(d.id, 'cancel-dislike'),
-    disabled: d.userLike.some(element => element.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
+    disabled: d.userLike.some(element => element.user.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__["faThumbsDown"]
   })) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLikeButton, {
     onClick: () => addLike(d.id, 'dislike'),
-    disabled: d.userLike.some(element => element.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
+    disabled: d.userLike.some(element => element.user.username === Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_11__["getUserName"])())
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__["faThumbsDown"]
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
+    className: "justify-content-md-center"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(allContent === null || allContent === void 0 ? void 0 : allContent.first) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_5__["Button"], {
+    className: "btn btn-sm mt-2",
+    variant: "outline-primary",
+    onClick: () => setPage({
+      number: page.number - 1
+    })
+  }, '<') : null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(allContent === null || allContent === void 0 ? void 0 : allContent.last) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_5__["Button"], {
+    className: "btn btn-sm mt-2 ",
+    variant: "outline-primary",
+    onClick: () => setPage({
+      number: page.number + 1
+    })
+  }, '>') : null)));
 };
 
 /***/ }),
@@ -3868,24 +3956,31 @@ const StyledContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MO
   componentId: "sc-1s8aej3-7"
 })(["color:blueviolet;font-weight:500;"]);
 const MainPage = () => {
+  var _allTopics$content;
+
   const [newTopic, setNewTopic] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
   const {
     isAuthenticated
   } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_5__["useAuthentication"])();
   const [allTopics, setAllTopics] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
-  const [updateTopics, setUpdateTopics] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
+  const [page, setPage] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    number: 0
+  });
+  const {
+    isSuccessRequired
+  } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_5__["useTemporary"])();
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
-    _internship_shared_api__WEBPACK_IMPORTED_MODULE_7__["api"].auth.getTopic().then(r => setAllTopics(r)).catch(e => console.error(e));
-    setUpdateTopics(false);
-  }, [updateTopics]);
+    _internship_shared_api__WEBPACK_IMPORTED_MODULE_7__["api"].auth.getTopic(page.number).then(r => setAllTopics(r)).catch(e => console.error(e));
+    console.log(isSuccessRequired);
+  }, [page]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledNewButton, {
     onClick: () => setNewTopic(true)
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledIcon, {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__["faPlus"]
   }))) : null, newTopic ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_6__["TopicForm"], {
     setClose: setNewTopic,
-    setUpdateTopics: setUpdateTopics
-  }) : null, allTopics === null || allTopics === void 0 ? void 0 : allTopics.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    setPage: setPage
+  }) : null, allTopics === null || allTopics === void 0 ? void 0 : (_allTopics$content = allTopics.content) === null || _allTopics$content === void 0 ? void 0 : _allTopics$content.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     style: {
       listStyleType: 'none'
     },
@@ -3895,7 +3990,27 @@ const MainPage = () => {
     to: '/contents/' + d.topicName
   }, d.topicName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "\u0130\xE7erik say\u0131s\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.contentNumber), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131:"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/user/' + d.user.username
-  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.createDate.substring(11, 16))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
+  }, d.user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.createDate.substring(11, 16))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
+    className: "justify-content-md-center"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(allTopics === null || allTopics === void 0 ? void 0 : allTopics.first) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_6__["Button"], {
+    className: "btn btn-sm mt-2",
+    variant: "outline-primary",
+    onClick: () => setPage({
+      number: page.number - 1
+    })
+  }, '<') : null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(allTopics === null || allTopics === void 0 ? void 0 : allTopics.last) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_6__["Button"], {
+    className: "btn btn-sm mt-2 ",
+    variant: "outline-primary",
+    onClick: () => setPage({
+      number: page.number + 1
+    })
+  }, '>') : null)));
 };
 
 /***/ }),
@@ -3996,7 +4111,6 @@ const Profile = () => {
   const [likeInfo, setLikeInfo] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
   const [dislikeInfo, setDislikeInfo] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
   const [detail, setDetail] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
-  const [myContents, setMyContents] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
   const {
     isAuthenticated
   } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_5__["useAuthentication"])();
@@ -4006,9 +4120,6 @@ const Profile = () => {
     _internship_shared_api__WEBPACK_IMPORTED_MODULE_3__["api"].auth.userDetail().then(r => setDetail(r)).catch(e => console.error(e));
     setEditUserInfo(false);
   }, [editUserInfo]);
-  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
-    _internship_shared_api__WEBPACK_IMPORTED_MODULE_3__["api"].auth.myContents().then(r => setMyContents(r)).catch(e => console.error(e));
-  }, []);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
     if (!isAuthenticated) {
       history.push('/');
@@ -4180,9 +4291,7 @@ const Profile = () => {
     onClick: () => setContentsInfo(false)
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_9__["faTimes"]
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_profilePageComponents__WEBPACK_IMPORTED_MODULE_1__["MyContents"], {
-    myContents: myContents
-  })) : null, likeInfo ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_profilePageComponents__WEBPACK_IMPORTED_MODULE_1__["MyContents"], null)) : null, likeInfo ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Button"], {
     className: "btn btn-danger mb-3",
     disabled: !likeInfo,
     onClick: () => setLikeInfo(false)
@@ -4447,6 +4556,8 @@ const StyledContent = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MO
   componentId: "sc-1alte52-5"
 })(["color:blueviolet;font-weight:500;"]);
 const UserInfo = () => {
+  var _userContents$content;
+
   const [detail, setDetail] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
   const {
     userName
@@ -4455,16 +4566,15 @@ const UserInfo = () => {
   const [likeInfo, setLikeInfo] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
   const [dislikeInfo, setDislikeInfo] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
   const [userContents, setUserContents] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
+  const [page, setPage] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    number: 0
+  });
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
     _internship_shared_api__WEBPACK_IMPORTED_MODULE_2__["api"].auth.userInfo(userName).then(r => setDetail(r)).catch(e => console.error(e));
-    setLikeInfo(false);
-    setDislikeInfo(false);
   }, [userName]);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
-    _internship_shared_api__WEBPACK_IMPORTED_MODULE_2__["api"].auth.userContents(userName).then(r => setUserContents(r)).catch(e => console.error(e));
-    setLikeInfo(false);
-    setDislikeInfo(false);
-  }, [userName]);
+    _internship_shared_api__WEBPACK_IMPORTED_MODULE_2__["api"].auth.userContents(userName, page.number).then(r => setUserContents(r)).catch(e => console.error(e));
+  }, [page]);
 
   const LookUserContents = () => {
     setContentsInfo(true);
@@ -4525,7 +4635,7 @@ const UserInfo = () => {
     onClick: () => setContentsInfo(false)
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faTimes"]
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, userContents === null || userContents === void 0 ? void 0 : userContents.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, userContents === null || userContents === void 0 ? void 0 : (_userContents$content = userContents.content) === null || _userContents$content === void 0 ? void 0 : _userContents$content.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     style: {
       listStyleType: 'none'
     },
@@ -4533,7 +4643,27 @@ const UserInfo = () => {
     className: "ml-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/contents/' + d.topic.topicName
-  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Like: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.like, " "), "Dislike: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislike, " ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16)))))))) : null, likeInfo ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Like: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.like, " "), "Dislike: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislike, " ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16)))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
+    className: "justify-content-md-center"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(userContents === null || userContents === void 0 ? void 0 : userContents.first) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+    className: "btn btn-sm mt-2",
+    variant: "outline-primary",
+    onClick: () => setPage({
+      number: page.number - 1
+    })
+  }, '<') : null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(userContents === null || userContents === void 0 ? void 0 : userContents.last) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+    className: "btn btn-sm mt-2 ",
+    variant: "outline-primary",
+    onClick: () => setPage({
+      number: page.number + 1
+    })
+  }, '>') : null)))) : null, likeInfo ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
     className: "btn btn-danger mb-3",
     disabled: !likeInfo,
     onClick: () => setLikeInfo(false)
@@ -4899,6 +5029,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap */ "../../../node_modules/react-bootstrap/esm/index.js");
 /* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! styled-components */ "../../../node_modules/styled-components/dist/styled-components.browser.esm.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "../../../node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @internship/shared/api */ "../../../libs/shared/api/src/index.ts");
+/* harmony import */ var _internship_ui__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @internship/ui */ "../../../libs/ui/src/index.ts");
+
+
 
 
 
@@ -4927,10 +5061,17 @@ const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODUL
   displayName: "MyContents__StyledLink",
   componentId: "xd1d09-5"
 })(["color:blueviolet;"]);
-const MyContents = ({
-  myContents
-}) => {
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, myContents === null || myContents === void 0 ? void 0 : myContents.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+const MyContents = ({}) => {
+  var _myContents$content;
+
+  const [page, setPage] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    number: 0
+  });
+  const [myContents, setMyContents] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
+    _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__["api"].auth.myContents(page.number).then(r => setMyContents(r)).catch(e => console.error(e));
+  }, [page]);
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, myContents === null || myContents === void 0 ? void 0 : (_myContents$content = myContents.content) === null || _myContents$content === void 0 ? void 0 : _myContents$content.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     style: {
       listStyleType: 'none'
     },
@@ -4938,7 +5079,27 @@ const MyContents = ({
     className: "ml-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/contents/' + d.topic.topicName
-  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Like: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.like, " "), "Dislike: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislike)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))))))));
+  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Like: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.like, " "), "Dislike: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislike)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
+    className: "justify-content-md-center"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(myContents === null || myContents === void 0 ? void 0 : myContents.first) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_5__["Button"], {
+    className: "btn btn-sm mt-2",
+    variant: "outline-primary",
+    onClick: () => setPage({
+      number: page.number - 1
+    })
+  }, '<') : null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
+    xs: true,
+    lg: "1"
+  }, !(myContents === null || myContents === void 0 ? void 0 : myContents.last) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_5__["Button"], {
+    className: "btn btn-sm mt-2 ",
+    variant: "outline-primary",
+    onClick: () => setPage({
+      number: page.number + 1
+    })
+  }, '>') : null)));
 };
 
 /***/ }),
