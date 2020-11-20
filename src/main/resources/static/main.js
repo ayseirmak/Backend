@@ -313,7 +313,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interceptors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./interceptors */ "../../../libs/shared/api/src/lib/config/interceptors/index.ts");
 
 
-const baseUrl = 'http://localhost:8080';
+const baseUrl = 'https://tatli-sozluk.herokuapp.com';
 const defaultConfig = {
   baseURL: `${baseUrl}/api/`
 };
@@ -582,7 +582,7 @@ const refreshTokenInterceptor = (error, axios = axios__WEBPACK_IMPORTED_MODULE_1
 
   if (error.response.status === 401 && ((_error$response$data = error.response.data) === null || _error$response$data === void 0 ? void 0 : _error$response$data.error.toString()) === 'JWT Expired.') {
     return new Promise(resolve => {
-      axios.get('http://localhost:8080/api/auth/refresh-token', {
+      axios.get('https://tatli-sozluk.herokuapp.com/api/auth/refresh-token', {
         params: {
           token: Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_0__["getRefreshToken"])()
         }
@@ -943,7 +943,7 @@ const getUserName = () => window.localStorage.getItem(_internship_shared_types__
 const removeUserName = () => window.localStorage.removeItem(_internship_shared_types__WEBPACK_IMPORTED_MODULE_0__["USER_NAME"]);
 const getUrlParameter = (name, search) => {
   name = name.replace(/[\\[]/, '\\[').replace(/[\]]/, '\\]');
-  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+  const regex = new RegExp('[\\?&]' + name + '=([^&]*)');
   const results = regex.exec(search);
   return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
@@ -2915,7 +2915,7 @@ const Routes = (_ref) => {
   } = _ref,
       props = _objectWithoutProperties(_ref, ["children"]);
 
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["BrowserRouter"], props, children, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["HashRouter"], props, children, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
     exact: true,
     path: "/",
     component: _pages__WEBPACK_IMPORTED_MODULE_2__["MainPage"]
@@ -3688,7 +3688,7 @@ const Login = () => {
     className: "mb-3 mt-3"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(StyledAnchorTag, {
     className: "btn btn-outline-dark alert-dismissible",
-    href: "http://localhost:8080/oauth2/authorize/google?redirect_uri=http://localhost:4200/auth"
+    href: "https://tatli-sozluk.herokuapp.com/oauth2/authorize/google?redirect_uri=https://tatli-sozluk.herokuapp.com/#/auth"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_8__["FontAwesomeIcon"], {
     icon: _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_9__["faGoogle"],
     style: {
@@ -5153,7 +5153,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["BrowserRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_app_app__WEBPACK_IMPORTED_MODULE_4__["App"], null)), document.getElementById('root'));
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["HashRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_app_app__WEBPACK_IMPORTED_MODULE_4__["App"], null)), document.getElementById('root'));
 
 /***/ }),
 
