@@ -48,14 +48,19 @@ create table if not exists "user_roles"
 
 create table if not exists "content_like"
 (
+    id               serial primary key,
     user_id    int         not null references cloud_users (id),
-    content_id int         not null references cloud_content (id)
+    content_id int         not null references cloud_content (id),
+    like_date    timestamp without time zone NOT NULL
+
 );
 
 create table if not exists "content_dislike"
 (
+    id               serial primary key,
     user_id    int         not null references cloud_users (id),
-    content_id int         not null references cloud_content (id)
+    content_id int         not null references cloud_content (id),
+    dislike_date    timestamp without time zone NOT NULL
 );
 
 create table if not exists "token_blacklist"

@@ -6,24 +6,23 @@ import com.innova.dto.request.LikeForm;
 import com.innova.dto.request.TopicForm;
 import com.innova.dto.response.SuccessResponse;
 import com.innova.exception.BadRequestException;
-import com.innova.model.Content;
-import com.innova.model.Topic;
-import com.innova.model.User;
-import com.innova.repository.ContentRepository;
-import com.innova.repository.TopicRepository;
-import com.innova.repository.UserRepository;
+import com.innova.model.*;
+import com.innova.repository.*;
 import com.innova.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.Set;
-import java.util.TreeSet;
 
 @RestController
 @RequestMapping("api/entry")
@@ -41,6 +40,12 @@ public class EntryController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    ContentLikeRepository contentLikeRepository;
+
+    @Autowired
+    ContentDislikeRepository contentDislikeRepository;
+
     @PostMapping("/addTopic")
     public ResponseEntity<?> addEntry(@Valid @RequestBody TopicForm topicForm) {
         if (topicRepository.existsByTopicName(topicForm.getTopicName())) {
@@ -56,8 +61,8 @@ public class EntryController {
     }
 
     @GetMapping("/getTopics")
-    public ResponseEntity<?> getTopic() {
-        return ResponseEntity.ok().body(topicRepository.findAllByOrderByCreateDateDesc());
+    public ResponseEntity<?> getTopic(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(topicRepository.findAll(pageable));
     }
 
     @PostMapping("/addContent")
@@ -80,93 +85,65 @@ public class EntryController {
     }
 
     @GetMapping("/getContent")
-    public ResponseEntity<?> getContent(@RequestParam("topic") String topicName) {
+    public ResponseEntity<?> getContent(@RequestParam("topic") String topicName, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         if (topicRepository.existsByTopicName(topicName)) {
             Topic topic = topicRepository.findByTopicName(topicName);
-            Set <Content> sortContent = new TreeSet<Content>().descendingSet();
-            sortContent.addAll(topic.getCloud_content());
-            return ResponseEntity.ok().body(sortContent);
+            return ResponseEntity.ok().body(contentRepository.findByTopicOrderByDailyLikeDesc(topic, pageable));
         } else {
             throw new BadRequestException("Topic Name is not valid.", ErrorCodes.TOPIC_NOT_VALID);
         }
     }
 
     @GetMapping("/getMyContents")
-    public ResponseEntity<?> getMyContents() {
+    public ResponseEntity<?> getMyContents(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
-        Set<Content> contentForUser = user.getContent();
-        return ResponseEntity.ok().body(contentForUser);
+        return ResponseEntity.ok().body(contentRepository.findByUserOrderByCreateDateDesc(user, pageable));
     }
 
     @GetMapping("/getUserContents")
-    public ResponseEntity<?> getUserContents(@RequestParam("userName") String userName) {
+    public ResponseEntity<?> getUserContents(@RequestParam("userName") String userName, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new BadRequestException("User with given username could not found", ErrorCodes.NO_SUCH_USER));
-        ;
-        Set<Content> contentForUser = user.getContent();
-        return ResponseEntity.ok().body(contentForUser);
+        return ResponseEntity.ok().body(contentRepository.findByUserOrderByCreateDateDesc(user, pageable));
     }
 
     @PutMapping("/like-dislike")
+    @Transactional
     public ResponseEntity<?> likeDislike(@Valid @RequestBody LikeForm likeForm) {
         User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
         if (contentRepository.existsById(Integer.parseInt(likeForm.getContentID()))) {
             Content content = contentRepository.findById(Integer.parseInt(likeForm.getContentID()));
-            if (!user.getContentLike().contains(content) && !user.getContentDislike().contains(content)) {
+            if (!contentLikeRepository.existsByUserAndContent(user,content) && !contentDislikeRepository.existsByUserAndContent(user,content)) {
                 if (likeForm.getLike().equals("like")) {
                     content.setLike(content.getLike() + 1);
                     content.setDailyLike(content.getDailyLike() + 1);
-                    Set<User> userLike = content.getUserLike();
-                    userLike.add(user);
-                    content.setUserLike(userLike);
                     contentRepository.save(content);
-                    Set<Content> contentLike = user.getContentLike();
-                    contentLike.add(content);
-                    user.setContentLike(contentLike);
-                    userRepository.save(user);
+                    contentLikeRepository.save(new ContentLike(user,content));
                     SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
                     return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
                 } else if (likeForm.getLike().equals("dislike")) {
                     content.setDislike(content.getDislike() + 1);
                     content.setDailyDislike(content.getDailyDislike() + 1);
-                    Set<User> userDislike = content.getUserDislike();
-                    userDislike.add(user);
-                    content.setUserDislike(userDislike);
                     contentRepository.save(content);
-                    Set<Content> contentDislike = user.getContentDislike();
-                    contentDislike.add(content);
-                    user.setContentDislike(contentDislike);
-                    userRepository.save(user);
-                    SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
+                    contentDislikeRepository.save(new ContentDislike(user,content));
+                    SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully disliked.");
                     return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
                 } else {
                     throw new BadRequestException("Something is wrong", ErrorCodes.SOMETHING_IS_WRONG);
                 }
-            } else if (user.getContentLike().contains(content) && !user.getContentDislike().contains(content) && likeForm.getLike().equals("cancel-like")) {
+            } else if (contentLikeRepository.existsByUserAndContent(user,content) && !contentDislikeRepository.existsByUserAndContent(user,content) && likeForm.getLike().equals("cancel-like")) {
                 content.setLike(content.getLike() - 1);
                 content.setDailyLike(content.getDailyLike() - 1);
-                Set<User> userLike = content.getUserLike();
-                userLike.remove(user);
-                content.setUserLike(userLike);
                 contentRepository.save(content);
-                Set<Content> contentLike = user.getContentLike();
-                contentLike.remove(content);
-                user.setContentLike(contentLike);
-                userRepository.save(user);
-                SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
+                contentLikeRepository.delete(contentLikeRepository.findByUserAndContent(user,content));
+                SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully cancelled.");
                 return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
-            } else if (!user.getContentLike().contains(content) && user.getContentDislike().contains(content) && likeForm.getLike().equals("cancel-dislike")) {
+            } else if (!contentLikeRepository.existsByUserAndContent(user,content) && contentDislikeRepository.existsByUserAndContent(user,content) && likeForm.getLike().equals("cancel-dislike")) {
                 content.setDislike(content.getDislike() - 1);
                 content.setDailyDislike(content.getDailyDislike() - 1);
-                Set<User> userDislike = content.getUserDislike();
-                userDislike.remove(user);
-                content.setUserDislike(userDislike);
                 contentRepository.save(content);
-                Set<Content> contentDislike = user.getContentDislike();
-                contentDislike.remove(content);
-                user.setContentDislike(contentDislike);
-                userRepository.save(user);
-                SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully liked.");
+                contentDislikeRepository.delete(contentDislikeRepository.findByUserAndContent(user,content));
+                SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Successfully cancelled.");
                 return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
             } else {
                 if (likeForm.getLike().equals("like"))
@@ -183,18 +160,16 @@ public class EntryController {
     }
 
     @GetMapping("/getLikes")
-    public ResponseEntity<?> getMyLikes(@RequestParam("like") String like, @RequestParam("userName") String userName) {
+    public ResponseEntity<?> getMyLikes(@RequestParam("like") String like, @RequestParam("userName") String userName, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new BadRequestException("User with given username could not found", ErrorCodes.NO_SUCH_USER));
-        Set<Content> contentsForUser;
         if (like.equals("like")) {
-            contentsForUser = user.getContentLike();
+            return ResponseEntity.ok().body(contentLikeRepository.findByUser(user,pageable));
         } else if (like.equals("dislike")) {
-            contentsForUser = user.getContentDislike();
+            return ResponseEntity.ok().body(contentDislikeRepository.findByUser(user,pageable));
         } else {
             throw new BadRequestException("Something is wrong", ErrorCodes.SOMETHING_IS_WRONG);
         }
-        return ResponseEntity.ok().body(contentsForUser);
     }
 
 }

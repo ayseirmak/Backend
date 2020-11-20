@@ -1,5 +1,6 @@
 package com.innova.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -47,13 +48,13 @@ public class Content implements Comparable<Content> {
     @JsonIgnoreProperties(value = {"createDate", "contentNumber", "id", "cloud_content"})
     private Topic topic;
 
-    @ManyToMany(mappedBy = "contentLike")
-    @JsonIgnoreProperties(value = {"id", "enabled", "phoneNumber", "age", "name", "lastname", "activeSessions", "email", "password", "roles", "content", "contentLike", "contentDislike"})
-    private Set<User> userLike = new HashSet<User>();
+    @OneToMany(mappedBy = "content")
+    @JsonIgnoreProperties(value = {"id", "likeDate", "content"})
+    private Set<ContentLike> userLike = new HashSet<ContentLike>();
 
-    @ManyToMany(mappedBy = "contentDislike")
-    @JsonIgnoreProperties(value = {"id", "enabled", "phoneNumber", "age", "name", "lastname", "activeSessions", "email", "password", "roles", "content", "contentLike", "contentDislike"})
-    private Set<User> userDislike = new HashSet<User>();
+    @OneToMany(mappedBy = "content")
+    @JsonIgnoreProperties(value = {"id", "likeDate", "content"})
+    private Set<ContentDislike> userDislike = new HashSet<ContentDislike>();
 
 
     public Content() {
@@ -71,19 +72,19 @@ public class Content implements Comparable<Content> {
         this.topic = topic;
     }
 
-    public Set<User> getUserLike() {
+    public Set<ContentLike> getUserLike() {
         return userLike;
     }
 
-    public void setUserLike(Set<User> userLike) {
+    public void setUserLike(Set<ContentLike> userLike) {
         this.userLike = userLike;
     }
 
-    public Set<User> getUserDislike() {
+    public Set<ContentDislike> getUserDislike() {
         return userDislike;
     }
 
-    public void setUserDislike(Set<User> userDislike) {
+    public void setUserDislike(Set<ContentDislike> userDislike) {
         this.userDislike = userDislike;
     }
 

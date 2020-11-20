@@ -60,13 +60,11 @@ public class User {
     @JsonBackReference
     private Set<Content> content = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "content_like", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "content_id"))
-    private Set<Content> contentLike = new HashSet<Content>();
+    @OneToMany(mappedBy = "user")
+    private Set<ContentLike> contentLike = new HashSet<ContentLike>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "content_dislike", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "content_id"))
-    private Set<Content> contentDislike = new HashSet<Content>();
+    @OneToMany(mappedBy = "user")
+    private Set<ContentDislike> contentDislike = new HashSet<ContentDislike>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -110,19 +108,19 @@ public class User {
         this.content.add(content);
     }
 
-    public Set<Content> getContentLike() {
+    public Set<ContentLike> getContentLike() {
         return contentLike;
     }
 
-    public void setContentLike(Set<Content> contentLike) {
+    public void setContentLike(Set<ContentLike> contentLike) {
         this.contentLike = contentLike;
     }
 
-    public Set<Content> getContentDislike() {
+    public Set<ContentDislike> getContentDislike() {
         return contentDislike;
     }
 
-    public void setContentDislike(Set<Content> contentDislike) {
+    public void setContentDislike(Set<ContentDislike> contentDislike) {
         this.contentDislike = contentDislike;
     }
 
