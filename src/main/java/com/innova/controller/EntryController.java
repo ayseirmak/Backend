@@ -77,6 +77,7 @@ public class EntryController {
             contentRepository.save(content);
             topic.setContentNumber(topic.getContentNumber() + 1);
             topic.addCloud_content(content);
+            topicRepository.save(topic);
             user.addContent(content);
             userRepository.save(user);
             SuccessResponse response = new SuccessResponse(HttpStatus.OK, "New content added successfully.");
@@ -170,6 +171,26 @@ public class EntryController {
         } else {
             throw new BadRequestException("Something is wrong", ErrorCodes.SOMETHING_IS_WRONG);
         }
+    }
+
+    @DeleteMapping("/deleteContent")
+    @Transactional
+    public ResponseEntity<?> deleteContent(@RequestParam("contentId") String contentId, @RequestParam("topicName") String topicName) {
+        User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
+        Topic topic = topicRepository.findByTopicName(topicName);
+        Content content = contentRepository.findById(Integer.parseInt(contentId));
+        if(contentLikeRepository.existsByUserAndContent(user,content))
+         contentLikeRepository.delete(contentLikeRepository.findByUserAndContent(user,content));
+        if(contentDislikeRepository.existsByUserAndContent(user,content))
+         contentDislikeRepository.delete(contentDislikeRepository.findByUserAndContent(user,content));
+        topic.setContentNumber(topic.getContentNumber()-1);
+        topic.removeCloud_content(content);
+        user.removeContent(content);
+        topicRepository.save(topic);
+        userRepository.save(user);
+        contentRepository.delete(content);
+        SuccessResponse response = new SuccessResponse(HttpStatus.OK, "Content removed successfully");
+        return new ResponseEntity<>(response, new HttpHeaders(), response.getStatus());
     }
 
 }

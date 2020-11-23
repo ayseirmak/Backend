@@ -108,6 +108,10 @@ public class User {
         this.content.add(content);
     }
 
+    public void removeContent(Content content) {
+        this.content.remove(content);
+    }
+
     public Set<ContentLike> getContentLike() {
         return contentLike;
     }

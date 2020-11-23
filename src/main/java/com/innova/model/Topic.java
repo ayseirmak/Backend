@@ -102,6 +102,10 @@ public class Topic {
         cloud_content.add(content);
     }
 
+    public void removeCloud_content(Content content){
+        cloud_content.remove(content);
+    }
+
 
     public Set<Content> getCloud_content(){
         return this.cloud_content;
