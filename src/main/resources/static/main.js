@@ -225,6 +225,28 @@ class AuthResource {
         userName: username
       }
     }).then(r => r.data);
+
+    this.deleteContent = (authorizationToken, contentId, topicName) => this.axios.delete('/entry/deleteContent', {
+      headers: {
+        Authorization: authorizationToken
+      },
+      params: {
+        contentId: contentId,
+        topicName: topicName
+      }
+    }).then(r => r.data);
+
+    this.getSearchUsername = username => this.axios.get('search/user', {
+      params: {
+        username: username
+      }
+    }).then(r => r.data);
+
+    this.getSearchTopicName = topicName => this.axios.get('search/topic', {
+      params: {
+        topicName: topicName
+      }
+    }).then(r => r.data);
   } // TODO change any types according to request/response model
 
 
@@ -427,10 +449,13 @@ const err = {
   },
   'auth/send-email': {
     '400': 'Bu mail ile uygun bir kullanıcı bulamadık. Lütfen kayıt olunuz.'
+  },
+  'entry/addTopic': {
+    '110': 'Topic Name is already used!'
   }
 };
 const errorInterceptor = error => {
-  var _error$response, _error$response2, _error$response3, _error$response4, _error$response5, _error$response6, _error$response7, _error$response8, _error$response9, _error$response10, _error$response11, _error$response12, _error$response13, _error$response15, _error$response16;
+  var _error$response, _error$response2, _error$response3, _error$response4, _error$response5, _error$response6, _error$response7, _error$response8, _error$response10, _error$response11;
 
   let errorMessage = null;
 
@@ -442,39 +467,29 @@ const errorInterceptor = error => {
     errorMessage = err[error.config.url]['101'];
   } else if (((_error$response4 = error.response) === null || _error$response4 === void 0 ? void 0 : _error$response4.data.message.toString()) === '102') {
     errorMessage = err[error.config.url]['102'];
-  } else if (((_error$response5 = error.response) === null || _error$response5 === void 0 ? void 0 : _error$response5.data.message.toString()) === '110') {
-    errorMessage = err[error.config.url]['110'];
-  } else if (((_error$response6 = error.response) === null || _error$response6 === void 0 ? void 0 : _error$response6.data.message.toString()) === '111') {
-    errorMessage = err[error.config.url]['111'];
-  } else if (((_error$response7 = error.response) === null || _error$response7 === void 0 ? void 0 : _error$response7.data.message.toString()) === '112') {
-    errorMessage = err[error.config.url]['112'];
-  } else if (((_error$response8 = error.response) === null || _error$response8 === void 0 ? void 0 : _error$response8.data.message.toString()) === '113') {
-    errorMessage = err[error.config.url]['113'];
-  } else if (((_error$response9 = error.response) === null || _error$response9 === void 0 ? void 0 : _error$response9.data.message.toString()) === '114') {
-    errorMessage = err[error.config.url]['114'];
-  } else if (((_error$response10 = error.response) === null || _error$response10 === void 0 ? void 0 : _error$response10.data.message.toString()) === '105') {
+  } else if (((_error$response5 = error.response) === null || _error$response5 === void 0 ? void 0 : _error$response5.data.message.toString()) === '105') {
     errorMessage = err[error.config.url]['105'];
-  } else if (((_error$response11 = error.response) === null || _error$response11 === void 0 ? void 0 : _error$response11.data.message.toString()) === '300') {
-    errorMessage = err[error.config.url]['300'];
-  } else if (((_error$response12 = error.response) === null || _error$response12 === void 0 ? void 0 : _error$response12.data.message.toString()) === 'User with given email could not found') {
+  } else if (((_error$response6 = error.response) === null || _error$response6 === void 0 ? void 0 : _error$response6.data.message.toString()) === '110') {
+    errorMessage = err[error.config.url]['110'];
+  } else if (((_error$response7 = error.response) === null || _error$response7 === void 0 ? void 0 : _error$response7.data.message.toString()) === 'User with given email could not found') {
     errorMessage = err['auth/send-email']['400'];
-  } else if (error.config.url === 'auth/signin' && ((_error$response13 = error.response) === null || _error$response13 === void 0 ? void 0 : _error$response13.status) === 401) {
-    var _error$response14;
+  } else if (error.config.url === 'auth/signin' && ((_error$response8 = error.response) === null || _error$response8 === void 0 ? void 0 : _error$response8.status) === 401) {
+    var _error$response9;
 
-    if (((_error$response14 = error.response) === null || _error$response14 === void 0 ? void 0 : _error$response14.data.error.toString()) === 'Account not activated. Please activate your account!') {
+    if (((_error$response9 = error.response) === null || _error$response9 === void 0 ? void 0 : _error$response9.data.error.toString()) === 'Account not activated. Please activate your account!') {
       errorMessage = err[error.config.url]['401-2'];
     } else {
       errorMessage = err[error.config.url]['401'];
     }
-  } else if (((_error$response15 = error.response) === null || _error$response15 === void 0 ? void 0 : _error$response15.data.error.toString()) === 'Invalid Login details' && ((_error$response16 = error.response) === null || _error$response16 === void 0 ? void 0 : _error$response16.status) === 401) {
+  } else if (((_error$response10 = error.response) === null || _error$response10 === void 0 ? void 0 : _error$response10.data.error.toString()) === 'Invalid Login details' && ((_error$response11 = error.response) === null || _error$response11 === void 0 ? void 0 : _error$response11.status) === 401) {
     window['UGLY_STORE'].dispatch({
       type: '@Authentication/UPDATE_LOGOUT'
     });
     errorMessage = null;
   } else {
-    var _error$response17;
+    var _error$response12;
 
-    errorMessage = err[error.config.url][(_error$response17 = error.response) === null || _error$response17 === void 0 ? void 0 : _error$response17.status];
+    errorMessage = err[error.config.url][(_error$response12 = error.response) === null || _error$response12 === void 0 ? void 0 : _error$response12.status];
   }
 
   window['UGLY_STORE'].dispatch({
@@ -654,6 +669,9 @@ const success = {
   },
   'entry/addContent': {
     '200': 'İşleminiz Başarılı.'
+  },
+  'entry/deleteContent': {
+    '200': 'Entry başarı ile silindi.'
   }
 };
 const successInterceptor = res => {
@@ -663,6 +681,8 @@ const successInterceptor = res => {
     successMessage = success[res.config.url][res === null || res === void 0 ? void 0 : res.status];
   } else if ((res === null || res === void 0 ? void 0 : res.config.url.startsWith('auth/send-email')) && (res === null || res === void 0 ? void 0 : res.status) === 200) {
     successMessage = success['auth/send-email']['200'];
+  } else if ((res === null || res === void 0 ? void 0 : res.config.url.endsWith('deleteContent')) && (res === null || res === void 0 ? void 0 : res.status) === 200) {
+    successMessage = success['entry/deleteContent']['200'];
   }
 
   window['UGLY_STORE'].dispatch({
@@ -1933,31 +1953,101 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Search", function() { return Search; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap */ "../../../node_modules/react-bootstrap/esm/index.js");
-/* harmony import */ var _atoms_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../atoms/Button */ "../../../libs/ui/src/lib/atoms/Button/index.ts");
-/* harmony import */ var _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/free-brands-svg-icons */ "../../../node_modules/@fortawesome/free-brands-svg-icons/index.es.js");
+/* harmony import */ var _atoms_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../atoms/Button */ "../../../libs/ui/src/lib/atoms/Button/index.ts");
+/* harmony import */ var _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/free-brands-svg-icons */ "../../../node_modules/@fortawesome/free-brands-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "../../../node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "../../../node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var react_hook_form__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-hook-form */ "../../../node_modules/react-hook-form/dist/index.esm.js");
+/* harmony import */ var _atoms_Input__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../atoms/Input */ "../../../libs/ui/src/lib/atoms/Input/index.ts");
+/* harmony import */ var styled_components__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! styled-components */ "../../../node_modules/styled-components/dist/styled-components.browser.esm.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-router-dom */ "../../../node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var _internship_shared_api__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @internship/shared/api */ "../../../libs/shared/api/src/index.ts");
+/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react-bootstrap */ "../../../node_modules/react-bootstrap/esm/index.js");
 
 
 
 
 
+
+
+
+
+
+
+const StyledRow = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_7__["default"].div.withConfig({
+  displayName: "Search__StyledRow",
+  componentId: "lo66nz-0"
+})(["display:inline-flex;"]);
+const StyledInput = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_7__["default"])(_atoms_Input__WEBPACK_IMPORTED_MODULE_6__["Input"]).withConfig({
+  displayName: "Search__StyledInput",
+  componentId: "lo66nz-1"
+})(["margin-right:1rem;"]);
+const StyledLink = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_7__["default"])(react_router_dom__WEBPACK_IMPORTED_MODULE_8__["Link"]).withConfig({
+  displayName: "Search__StyledLink",
+  componentId: "lo66nz-2"
+})(["color:blueviolet;"]);
+const StyledDropdown = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE_7__["default"])(react_bootstrap__WEBPACK_IMPORTED_MODULE_10__["Dropdown"]).withConfig({
+  displayName: "Search__StyledDropdown",
+  componentId: "lo66nz-3"
+})(["margin-right:1rem;"]);
+let dropDownLinkStyle = {
+  backgroundColor: 'blueviolet',
+  borderColor: 'blueviolet'
+};
 const Search = () => {
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Form"], {
-    inline: true,
-    className: "mr-sm-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["FormControl"], {
-    type: "text",
+  const {
+    handleSubmit,
+    register,
+    errors
+  } = Object(react_hook_form__WEBPACK_IMPORTED_MODULE_5__["useForm"])();
+  const [isUsername, setIsUsername] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
+  const [isTopicName, setIsTopicName] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
+  const [value, setValue] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])('');
+
+  const setSearch = () => {
+    setIsTopicName(false);
+    setIsUsername(false);
+  };
+
+  const onSubmit = values => {
+    if (values.search !== '') {
+      _internship_shared_api__WEBPACK_IMPORTED_MODULE_9__["api"].auth.getSearchUsername(values.search).then(r => {
+        setIsUsername(true), setValue(values.search);
+      }).catch(e => console.error(e));
+      _internship_shared_api__WEBPACK_IMPORTED_MODULE_9__["api"].auth.getSearchTopicName(values.search).then(r => {
+        setIsTopicName(true), setValue(values.search);
+      }).catch(e => console.error(e));
+    }
+  };
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+    onSubmit: handleSubmit(onSubmit)
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, !isUsername && !isTopicName ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledInput, {
     placeholder: "Search",
-    className: "mr-sm-2"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms_Button__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+    name: "search",
+    ref: register({
+      required: false
+    }),
+    errors: errors
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms_Button__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+    type: "submit",
     variant: "light"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
-    icon: _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faSearchengin"],
-    style: {
-      marginRight: '10px'
-    }
-  })));
+    icon: _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_2__["faSearchengin"]
+  }))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledDropdown, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_10__["Dropdown"].Toggle, {
+    style: dropDownLinkStyle,
+    id: "dropdown-basic"
+  }, "Arama Sonu\xE7lar\u0131"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_10__["Dropdown"].Menu, null, isUsername ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_10__["Dropdown"].Item, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+    onClick: setSearch,
+    to: '/user/' + value
+  }, value, ": Kullan\u0131c\u0131")) : null, isTopicName ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_10__["Dropdown"].Item, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+    onClick: setSearch,
+    to: '/contents/' + value
+  }, value, ": Konu")) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_10__["Dropdown"].Item, {
+    onClick: setSearch
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
+    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faTimes"]
+  }))))));
 };
 
 /***/ }),
@@ -2035,6 +2125,10 @@ const StyledRow = /*#__PURE__*/Object(styled_components__WEBPACK_IMPORTED_MODULE
   displayName: "ContentForm__StyledRow",
   componentId: "sc-1d00qkb-0"
 })(["margin-bottom:1rem;margin-top:2rem;margin-right:auto;margin-left:auto;"]);
+const StyledTextarea = /*#__PURE__*/styled_components__WEBPACK_IMPORTED_MODULE_2__["default"].textarea.withConfig({
+  displayName: "ContentForm__StyledTextarea",
+  componentId: "sc-1d00qkb-1"
+})(["height:100%;width:100%;"]);
 const ContentForm = ({
   setClose,
   topicName
@@ -2077,14 +2171,13 @@ const ContentForm = ({
     className: "col-4 mt-2 ml-n2"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "i\xE7erik: ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "col-8 ml-sm-2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms__WEBPACK_IMPORTED_MODULE_3__["Input"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledTextarea, {
     placeholder: "\u0130\xE7eri\u011Fi giriniz",
     name: "content",
     onBlur: onBlur,
     ref: register({
       required: true
-    }),
-    errors: errors
+    })
   })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"].Footer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms__WEBPACK_IMPORTED_MODULE_3__["Button"], {
     variant: "secondary",
     type: "button",
@@ -2220,25 +2313,33 @@ const MyLikes = ({
       setMyDislike(r);
     }).catch(e => console.error(e));
   }, [pageDislike]);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, (_ref = likeOrDislike ? myLike === null || myLike === void 0 ? void 0 : myLike.content : myDislike === null || myDislike === void 0 ? void 0 : myDislike.content) === null || _ref === void 0 ? void 0 : _ref.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-    style: {
-      listStyleType: 'none'
-    },
-    key: key,
-    className: "ml-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
-    to: '/contents/' + d.content.topic.topicName
-  }, d.content.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content.content, " "), !isGuest ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
-    onClick: () => addLike(d.id.contentId, 'cancel-like')
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
-    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faThumbsDown"]
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Be\u011Fenme Tarihi: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.likeDate.substring(0, 10), " - ", d.likeDate.substring(11, 16)))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
-    onClick: () => addLike(d.id.contentId, 'cancel-dislike')
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
-    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faThumbsUp"]
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Be\u011Fenmeme Tarihi: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislikeDate.substring(0, 10), " - ", d.dislikeDate.substring(11, 16))))) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
-    to: '/user/' + d.user.username
-  }, d.user.username)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Olu\u015Fturulma Tarihi : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.content.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content.createDate.substring(11, 16)))))), likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, (_ref = likeOrDislike ? myLike === null || myLike === void 0 ? void 0 : myLike.content : myDislike === null || myDislike === void 0 ? void 0 : myDislike.content) === null || _ref === void 0 ? void 0 : _ref.map((d, key) => {
+    var _d$content, _d$content$topic, _d$content2, _d$likeDate, _d$dislikeDate, _d$dislikeDate2, _d$user, _d$user2, _d$content3, _d$content3$createDat, _d$content4, _d$content4$createDat;
+
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+      style: {
+        listStyleType: 'none'
+      },
+      key: key,
+      className: "ml-4"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+      to: '/contents/' + (d === null || d === void 0 ? void 0 : (_d$content = d.content) === null || _d$content === void 0 ? void 0 : (_d$content$topic = _d$content.topic) === null || _d$content$topic === void 0 ? void 0 : _d$content$topic.topicName)
+    }, d.content.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, (_d$content2 = d.content) === null || _d$content2 === void 0 ? void 0 : _d$content2.content, " "), !isGuest ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
+      onClick: () => {
+        var _d$id;
+
+        return addLike(d === null || d === void 0 ? void 0 : (_d$id = d.id) === null || _d$id === void 0 ? void 0 : _d$id.contentId, 'cancel-like');
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
+      icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faThumbsDown"]
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Be\u011Fenme Tarihi: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.likeDate.substring(0, 10), " - ", d === null || d === void 0 ? void 0 : (_d$likeDate = d.likeDate) === null || _d$likeDate === void 0 ? void 0 : _d$likeDate.substring(11, 16)))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledCancelLikeButton, {
+      onClick: () => addLike(d.id.contentId, 'cancel-dislike')
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
+      icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faThumbsUp"]
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Be\u011Fenmeme Tarihi: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d === null || d === void 0 ? void 0 : (_d$dislikeDate = d.dislikeDate) === null || _d$dislikeDate === void 0 ? void 0 : _d$dislikeDate.substring(0, 10), " - ", d === null || d === void 0 ? void 0 : (_d$dislikeDate2 = d.dislikeDate) === null || _d$dislikeDate2 === void 0 ? void 0 : _d$dislikeDate2.substring(11, 16))))) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Kullan\u0131c\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
+      to: '/user/' + (d === null || d === void 0 ? void 0 : (_d$user = d.user) === null || _d$user === void 0 ? void 0 : _d$user.username)
+    }, d === null || d === void 0 ? void 0 : (_d$user2 = d.user) === null || _d$user2 === void 0 ? void 0 : _d$user2.username)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Olu\u015Fturulma Tarihi : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d === null || d === void 0 ? void 0 : (_d$content3 = d.content) === null || _d$content3 === void 0 ? void 0 : (_d$content3$createDat = _d$content3.createDate) === null || _d$content3$createDat === void 0 ? void 0 : _d$content3$createDat.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d === null || d === void 0 ? void 0 : (_d$content4 = d.content) === null || _d$content4 === void 0 ? void 0 : (_d$content4$createDat = _d$content4.createDate) === null || _d$content4$createDat === void 0 ? void 0 : _d$content4$createDat.substring(11, 16)))));
+  }), likeOrDislike ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
     className: "justify-content-md-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
     xs: true,
@@ -2540,6 +2641,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_hook_form__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-hook-form */ "../../../node_modules/react-hook-form/dist/index.esm.js");
 /* harmony import */ var _internship_store_authentication__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @internship/store/authentication */ "../../../libs/store/authentication/src/index.ts");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-redux */ "../../../node_modules/react-redux/es/index.js");
+/* harmony import */ var _internship_shared_hooks__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @internship/shared/hooks */ "../../../libs/shared/hooks/src/index.ts");
+
 
 
 
@@ -2561,20 +2664,31 @@ const TopicForm = ({
     errors
   } = Object(react_hook_form__WEBPACK_IMPORTED_MODULE_4__["useForm"])();
   const dispatch = Object(react_redux__WEBPACK_IMPORTED_MODULE_6__["useDispatch"])();
-  const [show, setShow] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true); //TODO konu ismi daha önce varsa uyarı ver ekle.
+  const [show, setShow] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true);
+  const {
+    isErrorRequired,
+    isSuccessRequired
+  } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_7__["useTemporary"])();
 
   const onBlur = () => {
-    console.log('konu ismini araştır');
+    dispatch({
+      type: '@temp/ERROR_REQUIRED',
+      payload: null
+    });
   };
 
   const onSubmit = values => {
     dispatch(_internship_store_authentication__WEBPACK_IMPORTED_MODULE_5__["topicAsync"].request(values));
-    setClose(false);
-    setShow(false);
     setPage({
       number: 0
     });
   };
+
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
+    if (isSuccessRequired) {
+      setClose(false);
+    }
+  }, [isSuccessRequired]);
 
   const handleClose = () => {
     setShow(false);
@@ -2601,7 +2715,9 @@ const TopicForm = ({
       required: true
     }),
     errors: errors
-  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"].Footer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms__WEBPACK_IMPORTED_MODULE_3__["Button"], {
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, isErrorRequired ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Alert"], {
+    variant: "danger"
+  }, isErrorRequired) : null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Modal"].Footer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_atoms__WEBPACK_IMPORTED_MODULE_3__["Button"], {
     variant: "secondary",
     type: "button",
     onClick: () => handleClose()
@@ -3972,8 +4088,13 @@ const MainPage = () => {
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
     _internship_shared_api__WEBPACK_IMPORTED_MODULE_7__["api"].auth.getTopic(page.number).then(r => setAllTopics(r)).catch(e => console.error(e));
   }, [page, isSuccessRequired]);
+
+  const newTopicFunction = () => {
+    setNewTopic(true);
+  };
+
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledNewButton, {
-    onClick: () => setNewTopic(true)
+    onClick: newTopicFunction
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledIcon, {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__["faPlus"]
   }))) : null, newTopic ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_6__["TopicForm"], {
@@ -5030,6 +5151,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "../../../node_modules/react-router-dom/esm/react-router-dom.js");
 /* harmony import */ var _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @internship/shared/api */ "../../../libs/shared/api/src/index.ts");
 /* harmony import */ var _internship_ui__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @internship/ui */ "../../../libs/ui/src/index.ts");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "../../../node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "../../../node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _internship_shared_utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @internship/shared/utils */ "../../../libs/shared/utils/src/index.ts");
+/* harmony import */ var _internship_shared_hooks__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @internship/shared/hooks */ "../../../libs/shared/hooks/src/index.ts");
+
+
+
+
 
 
 
@@ -5067,9 +5196,18 @@ const MyContents = ({}) => {
     number: 0
   });
   const [myContents, setMyContents] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])();
+  const {
+    isSuccessRequired
+  } = Object(_internship_shared_hooks__WEBPACK_IMPORTED_MODULE_9__["useTemporary"])();
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
     _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__["api"].auth.myContents(page.number).then(r => setMyContents(r)).catch(e => console.error(e));
-  }, [page]);
+  }, [page, isSuccessRequired]);
+
+  const deleteContent = (contentId, topicName) => {
+    const accessToken = Object(_internship_shared_utils__WEBPACK_IMPORTED_MODULE_8__["getAccessToken"])();
+    _internship_shared_api__WEBPACK_IMPORTED_MODULE_4__["api"].auth.deleteContent(`Bearer ${accessToken}`, contentId, topicName).catch(e => console.error(e));
+  };
+
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContainer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRow, null, myContents === null || myContents === void 0 ? void 0 : (_myContents$content = myContents.content) === null || _myContents$content === void 0 ? void 0 : _myContents$content.map((d, key) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     style: {
       listStyleType: 'none'
@@ -5078,7 +5216,12 @@ const MyContents = ({}) => {
     className: "ml-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledRowContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Konu Ad\u0131 : ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledLink, {
     to: '/contents/' + d.topic.topicName
-  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Like: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.like, " "), "Dislike: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislike)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
+  }, d.topic.topicName)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.content, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Like: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.like, " "), "Dislike: ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, d.dislike)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Tarih :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(0, 10))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledStrong, null, "Saat :", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(StyledContent, null, " ", d.createDate.substring(11, 16))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_internship_ui__WEBPACK_IMPORTED_MODULE_5__["Button"], {
+    className: "btn btn-danger my-2",
+    onClick: () => deleteContent(d.id, d.topic.topicName)
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__["FontAwesomeIcon"], {
+    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__["faTrash"]
+  })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], {
     className: "justify-content-md-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
     xs: true,
