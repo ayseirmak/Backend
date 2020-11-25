@@ -17,7 +17,7 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
 
     Optional<Topic> findByTopicName(String username);
 
-    @Query("SELECT t.topicName FROM Topic t WHERE t.topicName LIKE lower(concat( '%',:topicName,'%'))")
+    @Query("SELECT t.topicName FROM Topic t WHERE t.topicName LIKE CONCAT('%',:topicName,'%')")
     List<String> findTopicsWithPartOfName(@Param("topicName") String topicName);
 
     Page<Topic> findAllByOrderByCreateDateDesc(Pageable pageable);
