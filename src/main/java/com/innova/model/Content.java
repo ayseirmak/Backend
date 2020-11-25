@@ -1,10 +1,10 @@
 package com.innova.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +36,7 @@ public class Content implements Comparable<Content> {
     private int dailyDislike;
 
     @Column(name = "create_date")
-    private Date createDate;
+    private LocalDateTime createDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -45,7 +45,7 @@ public class Content implements Comparable<Content> {
 
     @ManyToOne
     @JoinColumn(name = "topic_id", nullable = false)
-    @JsonIgnoreProperties(value = {"createDate", "contentNumber", "id", "cloud_content"})
+    @JsonIgnoreProperties(value = {"createDate", "contentNumber", "cloud_content"})
     private Topic topic;
 
     @OneToMany(mappedBy = "content")
@@ -61,7 +61,7 @@ public class Content implements Comparable<Content> {
 
     }
 
-    public Content(@NotBlank String content, int like, int dislike, int dailyLike, int dailyDislike, Date createDate, User user, Topic topic) {
+    public Content(@NotBlank String content, int like, int dislike, int dailyLike, int dailyDislike, LocalDateTime createDate, User user, Topic topic) {
         this.content = content;
         this.like = like;
         this.dislike = dislike;
@@ -136,11 +136,11 @@ public class Content implements Comparable<Content> {
         this.dailyDislike = dailyDislike;
     }
 
-    public Date getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 

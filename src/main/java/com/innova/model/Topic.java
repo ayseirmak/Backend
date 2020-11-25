@@ -1,14 +1,12 @@
 package com.innova.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,8 +14,6 @@ import java.util.Set;
 @Table(name = "topic", schema = "public",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"topic_name"})})
-
-
 public class Topic {
 
     @NotBlank
@@ -26,7 +22,7 @@ public class Topic {
     @SequenceGenerator(name = "topic_seq", sequenceName = "topic_seq", initialValue = 1, allocationSize = 1)
     private Integer id;
 
-    @Size(min = 3, max = 50)
+    @Size(min = 3, max = 300)
     @Column(name = "topic_name")
     @NotBlank
     private String topicName;
@@ -35,18 +31,18 @@ public class Topic {
     private int contentNumber;
 
     @Column(name = "create_date")
-    private Date createDate;
+    private LocalDateTime createDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties(value = {"id","enabled","phoneNumber","age","name","lastname","activeSessions","email","password","roles","content","contentLike","contentDislike"})
+    @JsonIgnoreProperties(value = {"id", "enabled", "phoneNumber", "age", "name", "lastname", "activeSessions", "email", "password", "roles", "content", "contentLike", "contentDislike"})
     private User user;
 
     @OneToMany(mappedBy = "topic")
     @JsonManagedReference
-    private Set<Content> cloud_content = new HashSet<>();;
+    private Set<Content> cloud_content = new HashSet<>();
 
-    public Topic(String topicName, int contentNumber, User user, Date createDate) {
+    public Topic(String topicName, int contentNumber, User user, LocalDateTime createDate) {
         this.topicName = topicName;
         this.contentNumber = contentNumber;
         this.user = user;
@@ -90,28 +86,28 @@ public class Topic {
         this.user = user;
     }
 
-    public Date getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public void addCloud_content(Content content){
+    public void addCloud_content(Content content) {
         cloud_content.add(content);
     }
 
-    public void removeCloud_content(Content content){
+    public void removeCloud_content(Content content) {
         cloud_content.remove(content);
     }
 
 
-    public Set<Content> getCloud_content(){
+    public Set<Content> getCloud_content() {
         return this.cloud_content;
     }
 
-    public void setCloud_content(Set<Content> content){
+    public void setCloud_content(Set<Content> content) {
         this.cloud_content = content;
     }
 

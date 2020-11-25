@@ -10,23 +10,22 @@ public class ContentForm {
     private String content;
 
     @NotBlank
-    @Size(min=3, max = 50)
-    private String topicName;
+    private String topicId;
 
     public String getContent() {
         return content;
-    }
-
-    public String getTopicName() {
-        return topicName;
     }
 
     public void setContent(String content) {
         this.content = content;
     }
 
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
+    public String getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
     }
 }
 

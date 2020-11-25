@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @RestController
@@ -51,7 +52,7 @@ public class EntryController {
             throw new BadRequestException("Topic Name is already used!", ErrorCodes.TOPIC_ALREADY_USED);
         }
         User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
-        Date date = new Date();
+        LocalDateTime date = LocalDateTime.now();
         Topic topic = new Topic(topicForm.getTopicName(), 0, user, date);
         topicRepository.save(topic);
 
@@ -61,17 +62,23 @@ public class EntryController {
 
     @GetMapping("/getTopics")
     public ResponseEntity<?> getTopic(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(topicRepository.findAll(pageable));
+        return ResponseEntity.ok().body(topicRepository.findAllByOrderByCreateDateDesc(pageable));
+    }
+
+    @GetMapping("/getTopics/contentNumber")
+    public ResponseEntity<?> getTopicOrderByContent(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(topicRepository.findAllByOrderByContentNumberDesc(pageable));
     }
 
     @PostMapping("/addContent")
     public ResponseEntity<?> addContent(@Valid @RequestBody ContentForm contentForm) {
         User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
-        Date date = new Date();
-        if (!topicRepository.existsByTopicName(contentForm.getTopicName())) {
+        LocalDateTime date = LocalDateTime.now();
+
+        if (!topicRepository.existsById(Integer.parseInt(contentForm.getTopicId()))) {
             throw new BadRequestException("Topic Name is not valid.", ErrorCodes.TOPIC_NOT_VALID);
         } else {
-            Topic topic = topicRepository.findByTopicName(contentForm.getTopicName()).orElseThrow(() -> new BadRequestException("Topic with given topicname could not found", ErrorCodes.TOPIC_NOT_VALID));;
+            Topic topic = topicRepository.findById(Integer.parseInt(contentForm.getTopicId())).orElseThrow(() -> new BadRequestException("Topic with given topicname could not found", ErrorCodes.TOPIC_NOT_VALID));;
             Content content = new Content(contentForm.getContent(), 0, 0, 0, 0, date, user, topic);
             contentRepository.save(content);
             topic.setContentNumber(topic.getContentNumber() + 1);
@@ -85,13 +92,28 @@ public class EntryController {
     }
 
     @GetMapping("/getContent")
-    public ResponseEntity<?> getContent(@RequestParam("topic") String topicName, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        if (topicRepository.existsByTopicName(topicName)) {
-            Topic topic = topicRepository.findByTopicName(topicName).orElseThrow(() -> new BadRequestException("Topic with given topicname could not found", ErrorCodes.TOPIC_NOT_VALID));;
+    public ResponseEntity<?> getContent(@RequestParam("id") String topicId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (topicRepository.existsById(Integer.parseInt(topicId))) {
+            Topic topic = topicRepository.findById(Integer.parseInt(topicId)).orElseThrow(() -> new BadRequestException("Topic with given topicname could not found", ErrorCodes.TOPIC_NOT_VALID));;
             return ResponseEntity.ok().body(contentRepository.findByTopicOrderByDailyLikeDesc(topic, pageable));
         } else {
             throw new BadRequestException("Topic Name is not valid.", ErrorCodes.TOPIC_NOT_VALID);
         }
+    }
+
+    @GetMapping("/getTopicName")
+    public ResponseEntity<?> getContent(@RequestParam("id") String topicId ) {
+        if (topicRepository.existsById(Integer.parseInt(topicId))) {
+            Topic topic = topicRepository.findById(Integer.parseInt(topicId)).orElseThrow(() -> new BadRequestException("Topic with given topicname could not found", ErrorCodes.TOPIC_NOT_VALID));;
+            return ResponseEntity.ok().body(topic.getTopicName());
+        } else {
+            throw new BadRequestException("Topic Name is not valid.", ErrorCodes.TOPIC_NOT_VALID);
+        }
+    }
+
+    @GetMapping("/getContent/random")
+    public ResponseEntity<?> getContentOrderByLike(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+            return ResponseEntity.ok().body(contentRepository.findByOrderByLikeDesc(pageable));
     }
 
     @GetMapping("/getMyContents")

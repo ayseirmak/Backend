@@ -35,7 +35,6 @@ spring:
       pageable:
         page-parameter: "currentPage"
         size-parameter: "pageSize"
-        default-page-size: 7
 
 innova:
   app:

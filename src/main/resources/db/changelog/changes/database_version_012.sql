@@ -14,7 +14,7 @@ create table if not exists "cloud_users"
 create table if not exists "topic"
 (
     id                serial primary key,
-    topic_name        varchar(50)                 not null unique,
+    topic_name        varchar(300)                 not null unique,
     number_of_content int,
     user_id           int                         not null references cloud_users (id),
     create_date       timestamp without time zone NOT NULL

@@ -16,5 +16,6 @@ public interface ContentRepository extends JpaRepository<Content, Integer> {
 
     Page<Content> findByUserOrderByCreateDateDesc(User user, Pageable pageable);
     Page<Content> findByTopicOrderByDailyLikeDesc(Topic topic, Pageable pageable);
+    Page<Content> findByOrderByLikeDesc( Pageable pageable);
 
 }
