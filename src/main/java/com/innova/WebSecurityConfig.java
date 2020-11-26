@@ -86,7 +86,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/entry/getLikes",
                         "/api/entry/getContent/random",
                         "/api/entry/getTopics/contentNumber",
-                        "/api/entry/getTopicName"
+                        "/api/entry/getTopicName",
+                        "/api/entry/getDislikes/user",
+                        "/api/entry/getLikes/user"
                 )
                 .permitAll().antMatchers(
                 "/api/search/**")

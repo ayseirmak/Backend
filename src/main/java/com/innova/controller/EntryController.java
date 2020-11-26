@@ -65,6 +65,27 @@ public class EntryController {
         return ResponseEntity.ok().body(topicRepository.findAllByOrderByCreateDateDesc(pageable));
     }
 
+    @GetMapping("/getLikes/user")
+    public ResponseEntity<?> getLikesUser(@RequestParam("id") String contentId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        if(contentRepository.existsById(Integer.parseInt(contentId))){
+            Content content = contentRepository.findById(Integer.parseInt(contentId));
+            return ResponseEntity.ok().body(contentLikeRepository.findByContent(content,pageable));
+        }
+        else
+            throw new BadRequestException("Content is not exist.", ErrorCodes.CONTENT_NOT_VALID);
+
+    }
+    @GetMapping("/getDislikes/user")
+    public ResponseEntity<?> getDislikesUser(@RequestParam("id") String contentId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        if(contentRepository.existsById(Integer.parseInt(contentId))){
+            Content content = contentRepository.findById(Integer.parseInt(contentId));
+            return ResponseEntity.ok().body(contentDislikeRepository.findByContent(content,pageable));
+        }
+        else
+            throw new BadRequestException("Content is not exist.", ErrorCodes.CONTENT_NOT_VALID);
+
+    }
+
     @GetMapping("/getTopics/contentNumber")
     public ResponseEntity<?> getTopicOrderByContent(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(topicRepository.findAllByOrderByContentNumberDesc(pageable));

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface ContentDislikeRepository extends JpaRepository<ContentDislike, ContentDislikeKey> {
     Page<ContentDislike> findByUser(User user, Pageable pageable);
 
+    Page<ContentDislike> findByContent(Content content, Pageable pageable);
+
     ContentDislike findByUserAndContent(User user, Content content);
 
     boolean existsByUserAndContent(User user, Content content);

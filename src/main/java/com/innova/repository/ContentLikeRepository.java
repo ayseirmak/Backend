@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 public interface ContentLikeRepository extends JpaRepository<ContentLike, ContentLikeKey> {
     Page<ContentLike> findByUser(User user, Pageable pageable);
 
+    Page<ContentLike> findByContent(Content content, Pageable pageable);
+
     ContentLike findByUserAndContent(User user, Content content);
 
     boolean existsByUserAndContent(User user, Content content);
