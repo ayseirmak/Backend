@@ -74,9 +74,9 @@ public class EntryService {
         return contentLikeRepository.findByContent(content, pageable);
     }
 
-    public Page<ContentLike> getDislikesUserService(String contentId, Pageable pageable) {
+    public Page<ContentDislike> getDislikesUserService(String contentId, Pageable pageable) {
         Content content = contentRepository.findById(Integer.parseInt(contentId));
-        return contentLikeRepository.findByContent(content, pageable);
+        return contentDislikeRepository.findByContent(content, pageable);
     }
 
     public Page<Topic> getTopicOrderByContentService(Pageable pageable) {
@@ -87,7 +87,6 @@ public class EntryService {
         User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
         LocalDateTime date = LocalDateTime.now();
         Topic topic = topicRepository.findById(Integer.parseInt(contentForm.getTopicId())).orElseThrow(() -> new BadRequestException("Topic with given topicname could not found", ErrorCodes.TOPIC_NOT_VALID));
-        ;
         Content content = new Content(contentForm.getContent(), 0, 0, 0, 0, date, user, topic);
         contentRepository.save(content);
         topic.setContentNumber(topic.getContentNumber() + 1);
@@ -161,22 +160,20 @@ public class EntryService {
     public String likeDislikeService(LikeForm likeForm) {
         User user = userServiceImpl.getUserWithAuthentication(SecurityContextHolder.getContext().getAuthentication());
         Content content = contentRepository.findById(Integer.parseInt(likeForm.getContentID()));
-        if (!contentLikeRepository.existsByUserAndContent(user, content) && !contentDislikeRepository.existsByUserAndContent(user, content)) {
-            if (likeForm.getLike().equals("like")) {
-                content.setLike(content.getLike() + 1);
-                content.setDailyLike(content.getDailyLike() + 1);
-                contentRepository.save(content);
-                contentLikeRepository.save(new ContentLike(user, content));
-                return "Successfully liked.";
-
-            } else if (likeForm.getLike().equals("dislike")) {
-                content.setDislike(content.getDislike() + 1);
-                content.setDailyDislike(content.getDailyDislike() + 1);
-                contentRepository.save(content);
-                contentDislikeRepository.save(new ContentDislike(user, content));
-                return "Successfully disliked.";
+        if (!contentLikeRepository.existsByUserAndContent(user, content) && !contentDislikeRepository.existsByUserAndContent(user, content) && likeForm.getLike().equals("like")) {
+            content.setLike(content.getLike() + 1);
+            content.setDailyLike(content.getDailyLike() + 1);
+            contentRepository.save(content);
+            contentLikeRepository.save(new ContentLike(user, content));
+            return "Successfully liked.";
             }
-        } else if (contentLikeRepository.existsByUserAndContent(user, content) && !contentDislikeRepository.existsByUserAndContent(user, content) && likeForm.getLike().equals("cancel-like")) {
+        else if (!contentLikeRepository.existsByUserAndContent(user, content) && !contentDislikeRepository.existsByUserAndContent(user, content) && likeForm.getLike().equals("dislike")) {
+            content.setDislike(content.getDislike() + 1);
+            content.setDailyDislike(content.getDailyDislike() + 1);
+            contentRepository.save(content);
+            contentDislikeRepository.save(new ContentDislike(user, content));
+            return "Successfully disliked.";
+        }else if (contentLikeRepository.existsByUserAndContent(user, content) && !contentDislikeRepository.existsByUserAndContent(user, content) && likeForm.getLike().equals("cancel-like")) {
             content.setLike(content.getLike() - 1);
             content.setDailyLike(content.getDailyLike() - 1);
             contentRepository.save(content);
@@ -188,7 +185,8 @@ public class EntryService {
             contentRepository.save(content);
             contentDislikeRepository.delete(contentDislikeRepository.findByUserAndContent(user, content));
             return "Successfully cancelled.";
+        } else{
+            return "Hata";
         }
-        return "Hata";
     }
 }
