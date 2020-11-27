@@ -42,10 +42,10 @@ innova:
     jwtSecretForVerification: Iamhereforverification
     jwtSecretForRefreshToken: Youshallnotpass
     jtwSecretForPassword: Iamsoosecret
-    jwtAccessTokenExpiration: 1800000
+    jwtAccessTokenExpiration: 180000000
     jwtRefreshTokenExpiration: 2592000000
     jwtVerificationTokenExpiration: 21600000
-    jwtPasswordTokenExpiration: 1800000
+    jwtPasswordTokenExpiration: 180000000
   oauth2:
     authorizedRedirectUris:
       - https://tatli-sozluk.herokuapp.com/#/auth
