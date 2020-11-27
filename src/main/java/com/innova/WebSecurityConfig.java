@@ -87,6 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/entry/getContent/random",
                         "/api/entry/getTopics/contentNumber",
                         "/api/entry/getTopicName",
+                        "/api/entry/getTopicId",
                         "/api/entry/getDislikes/user",
                         "/api/entry/getLikes/user"
                 )

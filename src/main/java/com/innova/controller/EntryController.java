@@ -128,7 +128,17 @@ public class EntryController {
             Topic topic = topicRepository.findById(Integer.parseInt(topicId)).orElseThrow(() -> new BadRequestException("Topic with given topicname could not found", ErrorCodes.TOPIC_NOT_VALID));;
             return ResponseEntity.ok().body(topic.getTopicName());
         } else {
-            throw new BadRequestException("Topic Name is not valid.", ErrorCodes.TOPIC_NOT_VALID);
+            throw new BadRequestException("Topic Id is not exist.", ErrorCodes.TOPIC_NOT_VALID);
+        }
+    }
+
+    @GetMapping("/getTopicId")
+    public ResponseEntity<?> getContentWithTopicName(@RequestParam("topicName") String topicName ) {
+        if (topicRepository.existsByTopicName(topicName)) {
+            Topic topic = topicRepository.findByTopicName(topicName).orElseThrow(() -> new BadRequestException("Topic with given topicname could not found", ErrorCodes.TOPIC_NOT_VALID));;
+            return ResponseEntity.ok().body(topic.getId());
+        } else {
+            throw new BadRequestException("Topic Name is not exist.", ErrorCodes.TOPIC_NOT_VALID);
         }
     }
 
