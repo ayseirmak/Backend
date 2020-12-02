@@ -1,13 +1,13 @@
 package com.innova.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,13 +56,24 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private Set<Content> content = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<ContentLike> contentLike = new HashSet<ContentLike>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<ContentDislike> contentDislike = new HashSet<ContentDislike>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<Role>();
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
-    private Set<ActiveSessions> activeSessions = new HashSet<>();;
+    private Set<ActiveSessions> activeSessions = new HashSet<>();
+
 
     public User() {
 
@@ -72,17 +83,49 @@ public class User {
         this.id = id;
     }
 
-    public void addActiveSession(ActiveSessions activeSession){
+    public void addActiveSession(ActiveSessions activeSession) {
         activeSessions.add(activeSession);
     }
 
 
-    public Set<ActiveSessions> getActiveSessions(){
+    public Set<ActiveSessions> getActiveSessions() {
         return this.activeSessions;
     }
 
-    public void setActiveSessions(Set<ActiveSessions> activeSessions){
+    public void setActiveSessions(Set<ActiveSessions> activeSessions) {
         this.activeSessions = activeSessions;
+    }
+
+    public Set<Content> getContent() {
+        return content;
+    }
+
+    public void setContent(Set<Content> content) {
+        this.content = content;
+    }
+
+    public void addContent(Content content) {
+        this.content.add(content);
+    }
+
+    public void removeContent(Content content) {
+        this.content.remove(content);
+    }
+
+    public Set<ContentLike> getContentLike() {
+        return contentLike;
+    }
+
+    public void setContentLike(Set<ContentLike> contentLike) {
+        this.contentLike = contentLike;
+    }
+
+    public Set<ContentDislike> getContentDislike() {
+        return contentDislike;
+    }
+
+    public void setContentDislike(Set<ContentDislike> contentDislike) {
+        this.contentDislike = contentDislike;
     }
 
     public Set<Role> getRoles() {

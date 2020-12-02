@@ -6,6 +6,7 @@ import com.innova.security.jwt.JwtAuthTokenFilter;
 import com.innova.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.innova.security.oauth2.OAuth2AuthenticationFailureHandler;
 import com.innova.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.innova.security.oauth2.OAuth2UserService;
 import com.innova.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,8 +21,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.innova.security.oauth2.OAuth2UserService;
 
 /*
  * Without writing this class
@@ -81,7 +80,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/oauth2/**")
                 .permitAll()
                 .antMatchers(
-                    "/api/user/create-new-password/**"
+                        "/api/entry/getTopics",
+                        "/api/entry/getContent",
+                        "/api/entry/getUserContents",
+                        "/api/entry/getLikes",
+                        "/api/entry/getContent/random",
+                        "/api/entry/getTopics/contentNumber",
+                        "/api/entry/getTopicName",
+                        "/api/entry/getTopicId",
+                        "/api/entry/getDislikes/user",
+                        "/api/entry/getLikes/user"
+                )
+                .permitAll().antMatchers(
+                "/api/search/**")
+                .permitAll()
+                .antMatchers(
+                        "/api/user/create-new-password/**",
+                        "/api/user/info/**"
                 )
                 .permitAll()
                 .anyRequest().authenticated()

@@ -6,6 +6,7 @@ import com.innova.dto.request.ChangePasswordForm;
 import com.innova.dto.request.ForgotAndChangePasswordForm;
 import com.innova.dto.request.LogoutForm;
 import com.innova.dto.response.SuccessResponse;
+import com.innova.dto.response.UserInfoResponse;
 import com.innova.event.OnRegistrationSuccessEvent;
 import com.innova.exception.BadRequestException;
 import com.innova.exception.ErrorWhileSendingEmailException;
@@ -20,13 +21,11 @@ import com.innova.security.jwt.JwtProvider;
 import com.innova.security.services.UserDetailImpl;
 import com.innova.service.UserServiceImpl;
 import com.innova.util.PasswordUtil;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -190,6 +189,13 @@ public class UserController {
         } else {
             throw new BadRequestException("Token must be given", ErrorCodes.REQUIRE_ALL_FIELDS);
         }
-
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getAllActiveSessions(@RequestParam("userName") String userName) {
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(() -> new BadRequestException("User with given username could not found", ErrorCodes.NO_SUCH_USER));
+        return ResponseEntity.ok().body(new UserInfoResponse(user.getUsername(),user.getName(),user.getLastname(),user.getAge()));
+    }
+
 }

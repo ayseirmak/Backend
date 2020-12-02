@@ -41,7 +41,7 @@ public class RegistrationEmailListener implements ApplicationListener<OnRegistra
         String token = jwtProvider.generateJwtTokenForVerification(user);
 
         String recipient = user.getEmail();
-        String url = "http://localhost:8080" + event.getAppUrl() + "/confirmRegistration?token=" + token;
+        String url = "https://tatli-sozluk.herokuapp.com" + event.getAppUrl() + "/confirmRegistration?token=" + token;
 
         Map model = new HashMap();
         model.put("name", user.getUsername());
